@@ -2,7 +2,13 @@
 <resources>
 
     <string name="app_name">CreepMe</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="find_new_friend_button">CREEP SOMEONE!</string>
     <string name="action_settings">Settings</string>
+    <string name="choose_friend_button">Choose Friend</string>
+    <string name="gps_enabled_warning">GPS must be enabled</string>
+    <string name="selector_profile_pic_description">Profile Picture</string>
+    <string name="default_friend_name_text">&lt; who you creepin &gt;</string>
+    <string name="follow_time_text">Follow Time: </string>
+    <string name="selector_final_button">Creep Them</string>
 
 </resources>
