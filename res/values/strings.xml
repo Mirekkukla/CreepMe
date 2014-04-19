@@ -2,8 +2,8 @@
 <resources>
 
     <string name="app_name">CreepMe</string>
-    <string name="find_new_friend_button">CREEP SOMEONE NEW!</string>
-    <string name="cancel_selections_button">CANCEL ALL SELECTIONS</string>
+    <string name="find_new_friend">CREEP SOMEONE NEW!</string>
+    <string name="cancel_selections">CANCEL ALL SELECTIONS</string>
     <string name="action_settings">Settings</string>
     <string name="selector_title">WHO YOU WANT TO CREEP ON?</string>
     <string name="who_you_finding">WHO YOU\'RE CREEPIN\' ON</string>
@@ -11,11 +11,11 @@
     <string name="name">NAME</string>
     <string name="time_left">TIME LEFT</string>
     <string name="gps">GPS</string>
-    <string name="choose_friend_button">Choose Friend</string>
+    <string name="choose_friend">Choose Friend</string>
     <string name="gps_enabled_warning">GPS must be enabled</string>
     <string name="selector_profile_pic_description">Profile Picture</string>
-    <string name="default_friend_name_text">&lt; who yer creepin &gt;</string>
-    <string name="follow_time_text">Follow Time: </string>
-    <string name="selector_final_button">Creep Them</string>
+    <string name="default_friend_name">&lt; who yer creepin &gt;</string>
+    <string name="follow_time">Follow Time: </string>
+    <string name="selector_final">Creep Them</string>
 
 </resources>

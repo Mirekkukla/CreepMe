@@ -34,8 +34,8 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="25dp"
 	        android:layout_marginRight="25dp"
-	        android:text="@string/find_new_friend_button"
-	        android:background="@drawable/create_new_button"
+	        android:text="@string/find_new_friend"
+	        android:textStyle="bold"
 	        android:layout_weight="0" />
 	    
 	</LinearLayout>
@@ -69,8 +69,8 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="25dp"
 	        android:layout_marginRight="25dp"
-	        android:text="@string/cancel_selections_button"
-	        android:background="@drawable/cancel_button"
+	        android:text="@string/cancel_selections"
+	        android:textStyle="bold"
 	        android:layout_weight="0" />
 	    
 	</LinearLayout>

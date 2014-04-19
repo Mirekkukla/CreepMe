@@ -1077,9 +1077,7 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int cancel_button=0x7f020057;
-        public static final int create_new_button=0x7f020058;
-        public static final int ic_launcher=0x7f020059;
+        public static final int ic_launcher=0x7f020057;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;
@@ -1252,15 +1250,15 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
         public static final int action_settings=0x7f0a0010;
         public static final int app_name=0x7f0a000d;
-        public static final int cancel_selections_button=0x7f0a000f;
-        public static final int choose_friend_button=0x7f0a0017;
-        public static final int default_friend_name_text=0x7f0a001a;
-        public static final int find_new_friend_button=0x7f0a000e;
-        public static final int follow_time_text=0x7f0a001b;
+        public static final int cancel_selections=0x7f0a000f;
+        public static final int choose_friend=0x7f0a0017;
+        public static final int default_friend_name=0x7f0a001a;
+        public static final int find_new_friend=0x7f0a000e;
+        public static final int follow_time=0x7f0a001b;
         public static final int gps=0x7f0a0016;
         public static final int gps_enabled_warning=0x7f0a0018;
         public static final int name=0x7f0a0014;
-        public static final int selector_final_button=0x7f0a001c;
+        public static final int selector_final=0x7f0a001c;
         public static final int selector_profile_pic_description=0x7f0a0019;
         public static final int selector_title=0x7f0a0011;
         public static final int time_left=0x7f0a0015;
