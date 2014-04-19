@@ -17,7 +17,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="10dp" 
 	        android:textSize="20sp"
-	        android:text="@string/who_you_finding"
+	        android:text="@string/who_you_creeping"
 	        style="?android:listSeparatorTextViewStyle" />
     
 	    <ListView
@@ -27,14 +27,14 @@
 	        android:layout_weight="1" />
 	    
 	    <Button
-	        android:id="@+id/find_new_friend_button"
+	        android:id="@+id/creep_new_friendButton"
 	        android:layout_marginTop="10dp"
 	        android:layout_marginBottom="0dp"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="25dp"
 	        android:layout_marginRight="25dp"
-	        android:text="@string/find_new_friend"
+	        android:text="@string/creep_new_friend"
 	        android:textStyle="bold"
 	        android:layout_weight="0" />
 	    
@@ -52,7 +52,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginTop="0dp" 
 	        android:textSize="20sp"
-	        android:text="@string/who_finding_you"
+	        android:text="@string/who_creeping_you"
 	        style="?android:listSeparatorTextViewStyle" />
 	    
 	    <ListView
@@ -62,7 +62,7 @@
 	        android:layout_weight="1" />
 	    
 	    <Button
-	        android:id="@+id/cancel_selections_button"
+	        android:id="@+id/cancel_selectionButton"
 	        android:layout_marginTop="5dp"
 	        android:layout_marginBottom="10dp"
 	        android:layout_width="match_parent"

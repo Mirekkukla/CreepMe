@@ -14,7 +14,7 @@
 	    style="?android:listSeparatorTextViewStyle" />
     
     <Button
-        android:id="@+id/choose_friend_button"
+        android:id="@+id/friend_selectorButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -33,7 +33,7 @@
         android:src="@drawable/ic_launcher" />
 
     <TextView
-        android:id="@+id/friend_selector_name_text"
+        android:id="@+id/friend_nameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -52,12 +52,12 @@
             android:layout_marginLeft="25dp"
             android:layout_marginBottom="40dp"
             android:textSize="20sp"
-            android:text="@string/follow_time" />
+            android:text="@string/creep_time" />
         
     </LinearLayout>
     
         <Button
-            android:id="@+id/selector_final_button"
+            android:id="@+id/selector_finalButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"

@@ -1095,10 +1095,10 @@ containing a value of this type.
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
-        public static final int cancel_selections_button=0x7f050042;
+        public static final int cancel_selectionButton=0x7f050042;
         public static final int checkbox=0x7f05002d;
-        public static final int choose_friend_button=0x7f05003d;
         public static final int collapseActionView=0x7f05000d;
+        public static final int creep_new_friendButton=0x7f050041;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1107,9 +1107,9 @@ containing a value of this type.
         public static final int end=0x7f050013;
         public static final int expand_activities_button=0x7f050026;
         public static final int expanded_menu=0x7f05002c;
-        public static final int find_new_friend_button=0x7f050041;
         public static final int fragmentContainer=0x7f05003c;
-        public static final int friend_selector_name_text=0x7f05003f;
+        public static final int friend_nameText=0x7f05003f;
+        public static final int friend_selectorButton=0x7f05003d;
         public static final int home=0x7f050014;
         public static final int homeAsUp=0x7f050005;
         public static final int icon=0x7f05002a;
@@ -1134,7 +1134,7 @@ containing a value of this type.
         public static final int search_plate=0x7f050036;
         public static final int search_src_text=0x7f050037;
         public static final int search_voice_btn=0x7f05003b;
-        public static final int selector_final_button=0x7f050040;
+        public static final int selector_finalButton=0x7f050040;
         public static final int selector_profile_pic=0x7f05003e;
         public static final int shortcut=0x7f05002e;
         public static final int showCustom=0x7f050007;
@@ -1205,7 +1205,7 @@ containing a value of this type.
         public static final int support_simple_spinner_dropdown_item=0x7f03001b;
     }
     public static final class menu {
-        public static final int main=0x7f0c0000;
+        public static final int fragment_main_options=0x7f0c0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1252,9 +1252,9 @@ containing a value of this type.
         public static final int app_name=0x7f0a000d;
         public static final int cancel_selections=0x7f0a000f;
         public static final int choose_friend=0x7f0a0017;
+        public static final int creep_new_friend=0x7f0a000e;
+        public static final int creep_time=0x7f0a001b;
         public static final int default_friend_name=0x7f0a001a;
-        public static final int find_new_friend=0x7f0a000e;
-        public static final int follow_time=0x7f0a001b;
         public static final int gps=0x7f0a0016;
         public static final int gps_enabled_warning=0x7f0a0018;
         public static final int name=0x7f0a0014;
@@ -1262,8 +1262,8 @@ containing a value of this type.
         public static final int selector_profile_pic_description=0x7f0a0019;
         public static final int selector_title=0x7f0a0011;
         public static final int time_left=0x7f0a0015;
-        public static final int who_finding_you=0x7f0a0013;
-        public static final int who_you_finding=0x7f0a0012;
+        public static final int who_creeping_you=0x7f0a0013;
+        public static final int who_you_creeping=0x7f0a0012;
     }
     public static final class style {
         /** 
