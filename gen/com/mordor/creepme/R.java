@@ -1077,7 +1077,9 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int ic_launcher=0x7f020057;
+        public static final int cancel_button=0x7f020057;
+        public static final int create_new_button=0x7f020058;
+        public static final int ic_launcher=0x7f020059;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;
@@ -1095,10 +1097,10 @@ containing a value of this type.
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
         public static final int beginning=0x7f050011;
+        public static final int cancel_selections_button=0x7f050042;
         public static final int checkbox=0x7f05002d;
         public static final int choose_friend_button=0x7f05003d;
         public static final int collapseActionView=0x7f05000d;
-        public static final int container=0x7f050041;
         public static final int default_activity_button=0x7f050028;
         public static final int dialog=0x7f05000e;
         public static final int disableHome=0x7f050008;
@@ -1107,7 +1109,7 @@ containing a value of this type.
         public static final int end=0x7f050013;
         public static final int expand_activities_button=0x7f050026;
         public static final int expanded_menu=0x7f05002c;
-        public static final int find_new_friend_button=0x7f050042;
+        public static final int find_new_friend_button=0x7f050041;
         public static final int fragmentContainer=0x7f05003c;
         public static final int friend_selector_name_text=0x7f05003f;
         public static final int home=0x7f050014;
@@ -1248,15 +1250,22 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
-        public static final int action_settings=0x7f0a000f;
+        public static final int action_settings=0x7f0a0010;
         public static final int app_name=0x7f0a000d;
-        public static final int choose_friend_button=0x7f0a0010;
-        public static final int default_friend_name_text=0x7f0a0013;
+        public static final int cancel_selections_button=0x7f0a000f;
+        public static final int choose_friend_button=0x7f0a0017;
+        public static final int default_friend_name_text=0x7f0a001a;
         public static final int find_new_friend_button=0x7f0a000e;
-        public static final int follow_time_text=0x7f0a0014;
-        public static final int gps_enabled_warning=0x7f0a0011;
-        public static final int selector_final_button=0x7f0a0015;
-        public static final int selector_profile_pic_description=0x7f0a0012;
+        public static final int follow_time_text=0x7f0a001b;
+        public static final int gps=0x7f0a0016;
+        public static final int gps_enabled_warning=0x7f0a0018;
+        public static final int name=0x7f0a0014;
+        public static final int selector_final_button=0x7f0a001c;
+        public static final int selector_profile_pic_description=0x7f0a0019;
+        public static final int selector_title=0x7f0a0011;
+        public static final int time_left=0x7f0a0015;
+        public static final int who_finding_you=0x7f0a0013;
+        public static final int who_you_finding=0x7f0a0012;
     }
     public static final class style {
         /** 
@@ -1487,6 +1496,7 @@ containing a value of this type.
         public static final int Widget_AppCompat_ProgressBar=0x7f0b000a;
         public static final int Widget_AppCompat_ProgressBar_Horizontal=0x7f0b0009;
         public static final int Widget_AppCompat_Spinner_DropDown_ActionBar=0x7f0b0022;
+        public static final int small_header_text=0x7f0b008d;
     }
     public static final class styleable {
         /**  ============================================ 

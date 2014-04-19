@@ -17,8 +17,7 @@ public class MainActivityFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_main, parent, false);
 
 		// Button to add new friend to "Who You're Creeping" list
-		mFindNewFriendButton = (Button) v
-				.findViewById(R.id.find_new_friend_button);
+		mFindNewFriendButton = (Button)v.findViewById(R.id.find_new_friend_button);
 		mFindNewFriendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
