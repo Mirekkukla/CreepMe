@@ -20,12 +20,13 @@
 	        android:text="@string/who_you_creeping"
 	        style="?android:listSeparatorTextViewStyle" />
     
-	    <ListView
+	    <fragment
 	        android:id="@+id/who_you_creepingList"
 	        android:layout_marginTop="10dp"
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
-	        android:layout_weight="1" />
+	        android:layout_weight="1"
+	        class="com.mordor.creepme.CreepListFragment" />
 	    
 	    <Button
 	        android:id="@+id/creep_new_friendButton"
@@ -37,7 +38,8 @@
 	        android:layout_marginRight="25dp"
 	        android:text="@string/creep_new_friend"
 	        android:textStyle="bold"
-	        android:layout_weight="0" />
+	        android:layout_weight="0"
+	        android:onClick="newFriendSelector" />
 	    
 	</LinearLayout>
     
@@ -56,12 +58,13 @@
 	        android:text="@string/who_creeping_you"
 	        style="?android:listSeparatorTextViewStyle" />
 	    
-	    <ListView
+	    <fragment
 	        android:id="@+id/who_creeping_youList"
 	        android:layout_marginTop="10dp"
 	        android:layout_width="match_parent"
 	        android:layout_height="0dp"
-	        android:layout_weight="1" />
+	        android:layout_weight="1"
+	        class="com.mordor.creepme.CreepListFragment" />
 	    
 	    <Button
 	        android:id="@+id/cancel_selectionButton"
