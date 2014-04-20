@@ -1,5 +1,7 @@
 package com.mordor.creepme;
 
+import java.util.Date;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +28,7 @@ public class FriendSelectorFragment extends Fragment {
 	private Creep mCreep;
 
 	private Button mFriendButton;
+	private Button mStartCreepButton;
 
 	/* Builds main fragment view for FriendSelector */
 	@TargetApi(11)
@@ -51,21 +54,36 @@ public class FriendSelectorFragment extends Fragment {
 			}
 		});
 
+		mStartCreepButton = (Button)v.findViewById(R.id.selector_finalButton);
+		mStartCreepButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mCreep.setDateMade(new Date());
+				/**
+				 * query database - if phone number has app, send request,
+				 * acknowledge request sent, and return to main.
+				 *
+				 * if phone number does not have app, ask if they want to send a
+				 * text inviting them. If yes, send text, store pending request
+				 * for set amount of time, and
+				 */
+			}
+		});
+
 		return v;
 	}
 
+	// Uses contact list to find friend when mFriendButton pressed
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode != Activity.RESULT_OK) return;
 
 		if (requestCode == REQUEST_CONTACT) {
 			Uri contactUri = data.getData();
-			String[] queryFields = new String[] {
-					ContactsContract.Contacts.DISPLAY_NAME
-			};
+			String[] queryFields = new String[] { ContactsContract.Contacts.DISPLAY_NAME };
 
-			Cursor c = getActivity().getContentResolver()
-					.query(contactUri, queryFields, null, null, null);
+			Cursor c = getActivity().getContentResolver().query(contactUri,
+					queryFields, null, null, null);
 
 			if(c.getCount() == 0) {
 				c.close();

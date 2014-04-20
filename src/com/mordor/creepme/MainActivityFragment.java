@@ -1,5 +1,7 @@
 package com.mordor.creepme;
 
+import java.util.ArrayList;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,11 +14,14 @@ import android.widget.Button;
 
 public class MainActivityFragment extends Fragment {
 	private Button mCreepNewFriendButton;
+	private ArrayList<Creep> mCreeps;
 
 	/* Builds main fragment view for Main */
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
+			Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mCreeps = CreepLab.get(getActivity()).getCreeps();
 		setHasOptionsMenu(true);
 		View v = inflater.inflate(R.layout.fragment_main, parent, false);
 

@@ -13,9 +13,11 @@
     <string name="gps">GPS</string>
     <string name="choose_friend">Choose Friend</string>
     <string name="gps_enabled_warning">GPS must be enabled</string>
-    <string name="selector_profile_pic_description">Profile Picture</string>
+    <string name="profile_pic_description">Profile Picture</string>
     <string name="default_friend_name">&lt; who yer creepin &gt;</string>
-    <string name="creep_time">Creep Time: </string>
+    <string name="creep_time">Set Creep Time:</string>
+    <string name="default_follow_time">05 hr 00 min</string>
     <string name="selector_final">Creep Them</string>
+    <string name="gps_enabled">GPS Enabled</string>
 
 </resources>
