@@ -22,7 +22,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class FriendSelectorFragment extends Fragment {
-	private static final String TAG = "FriendSelectorFragment";
 	private static final int REQUEST_CONTACT = 2;
 
 	private Creep mCreep;
@@ -37,13 +36,17 @@ public class FriendSelectorFragment extends Fragment {
 			Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
+
+		// Inflates fragment layout into View
 		View v = inflater.inflate(R.layout.fragment_friend_selector, parent,
 				false);
 
+		// Check for compatibility
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 
+		// Defines and wires up button linked to contacts app to choose friend
 		mFriendButton = (Button)v.findViewById(R.id.friend_selectorButton);
 		mFriendButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -54,6 +57,7 @@ public class FriendSelectorFragment extends Fragment {
 			}
 		});
 
+		// Defines and wires up button to set creep and begin verification
 		mStartCreepButton = (Button)v.findViewById(R.id.selector_finalButton);
 		mStartCreepButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -73,7 +77,7 @@ public class FriendSelectorFragment extends Fragment {
 		return v;
 	}
 
-	// Uses contact list to find friend when mFriendButton pressed
+	/* Uses contact list to find friend when mFriendButton pressed */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(resultCode != Activity.RESULT_OK) return;
@@ -99,6 +103,7 @@ public class FriendSelectorFragment extends Fragment {
 		}
 	}
 
+	/* Changes friend name text from default to reflect contact choice */
 	public void setCreepView(String text) {
 		TextView textView = (TextView) getView().findViewById(
 				R.id.friend_nameText);

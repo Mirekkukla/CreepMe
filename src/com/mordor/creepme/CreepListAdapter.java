@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,11 +26,12 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
 		this.creepData = creepData;
+		Log.i("tag", "1");
 	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-
+		Log.i("tag", "2");
 		CreepHolder holder = null;
 
 		if (convertView == null) {

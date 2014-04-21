@@ -12,11 +12,10 @@ public class CreepLab {
 
 	private static CreepLab sCreepLab;
 
-	private CreepLab(Context appContext, Boolean byYou) {
+	private CreepLab(Context appContext) {
 		mCreepsByYou = new ArrayList<Creep>();
 		mCreepsOnYou = new ArrayList<Creep>();
 		// Temp list population
-		if(byYou) {
 			for (int i = 0; i < 3; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
@@ -25,7 +24,6 @@ public class CreepLab {
 				c.setFollowTime(i * 1000 * 60 * 60 * 5);
 				mCreepsByYou.add(c);
 			}
-		} else {
 			for (int i = 0; i < 5; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
@@ -34,12 +32,11 @@ public class CreepLab {
 				c.setFollowTime(i * 1000 * 60 * 60 * 5);
 				mCreepsOnYou.add(c);
 			}
-		}
 	}
 
-	public static CreepLab get(Context c, Boolean byYou) {
+	public static CreepLab get(Context c) {
 		if (sCreepLab == null) {
-			sCreepLab = new CreepLab(c.getApplicationContext(), byYou);
+			sCreepLab = new CreepLab(c.getApplicationContext());
 		}
 		return sCreepLab;
 	}
