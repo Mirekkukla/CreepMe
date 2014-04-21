@@ -4,14 +4,13 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +18,8 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private final Context context;
 	private final int layoutResourceId;
 	private final ArrayList<Creep> creepData;
+	private CountDownTimer counter;
+	private TextView tv;
 
 	public CreepListAdapter(Context context, int layoutResourceId,
 			ArrayList<Creep> creepData) {
@@ -26,12 +27,11 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
 		this.creepData = creepData;
-		Log.i("tag", "1");
 	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		Log.i("tag", "2");
+
 		CreepHolder holder = null;
 
 		if (convertView == null) {
@@ -49,7 +49,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 					.findViewById(R.id.profile_picImage);
 			holder.name = (TextView) convertView
 					.findViewById(R.id.friend_nameText);
-			holder.timeLeft = (Chronometer) convertView
+			holder.timeLeft = (TextView) convertView
 					.findViewById(R.id.follow_time);
 			holder.gps = (ImageView) convertView
 					.findViewById(R.id.gps_enabledImage);
@@ -72,11 +72,12 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		holder.checkBox.setChecked(false);
 		// holder.profilePic.setImageDrawable(creepData.get(position).getProfilePic());
 		holder.name.setText(creepData.get(position).getName());
-		// holder.timeLeft(creepData.get(position).set)
+		// holder.timeLeft.setText(creepData.get(position).getFollowTime())
+		tv = holder.timeLeft;
+		counter = new MyCountDownTimer(creepData.get(position).getFollowTime(),
+				1000);
+		counter.start();
 		// holder.gps.setImageDrawable(creepData.get(position).get)
-
-		// ImageButton img = (ImageButton) convertView.findViewById(R.id.check);
-		// img.setTag(position);
 
 		return convertView;
 	}
@@ -85,7 +86,29 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		CheckBox checkBox;
 		ImageView profilePic;
 		TextView name;
-		Chronometer timeLeft;
+		TextView timeLeft;
 		ImageView gps;
+	}
+
+	public class MyCountDownTimer extends CountDownTimer {
+		public MyCountDownTimer(long startTime, long interval) {
+			super(startTime, interval);
+		}
+
+		@Override
+		public void onTick(long millisToFinish) {
+			int sec = (int) (millisToFinish / 1000) % 60;
+			int min = (int) ((millisToFinish / (1000 * 60)) % 60);
+			int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
+			String text = (Integer.toString(hr) + ":" + Integer.toString(min)
+					+ ":" + Integer.toString(sec));
+			tv.setText(text);
+		}
+
+		@Override
+		public void onFinish() {
+			// end creep
+			tv.setText("--:--:--");
+		}
 	}
 }

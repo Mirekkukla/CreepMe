@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FriendSelectorFragment extends Fragment {
 	private static final int REQUEST_CONTACT = 2;
@@ -46,6 +47,8 @@ public class FriendSelectorFragment extends Fragment {
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 
+		mCreep = new Creep();
+
 		// Defines and wires up button linked to contacts app to choose friend
 		mFriendButton = (Button)v.findViewById(R.id.friend_selectorButton);
 		mFriendButton.setOnClickListener(new View.OnClickListener() {
@@ -58,11 +61,39 @@ public class FriendSelectorFragment extends Fragment {
 		});
 
 		// Defines and wires up button to set creep and begin verification
-		mStartCreepButton = (Button)v.findViewById(R.id.selector_finalButton);
+		mStartCreepButton = (Button) v.findViewById(R.id.selector_finalButton);
 		mStartCreepButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mCreep.setDateMade(new Date());
+
+				// Set follow time
+				// mCreep.setFollowTime(parseFollowTime(v));
+				mCreep.setFollowTime((long) 5 * 60 * 60 * 1000); // default 5
+																	// hrs
+
+				// Set time made
+				Date currDate = new Date();
+				mCreep.setTimeMade(currDate.getTime());
+
+				// Set profile pic
+				// ImageView iv = (ImageView) v
+				// .findViewById(R.id.selector_profilePic);
+				// Drawable drawable = iv.getDrawable();
+				// Bitmap bitmap =
+				// Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+				// drawable.getIntrinsicHeight(), Config.ARGB_8888);
+				// mCreep.setProfilePic(bitmap);
+
+
+				if (mCreep.getName() == null) {
+					Toast.makeText(getActivity(),
+							"Please choose creep victim first!",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				Intent i = new Intent(getActivity(), MainActivity.class);
+				getActivity().startActivity(i);
 				/**
 				 * query database - if phone number has app, send request,
 				 * acknowledge request sent, and return to main.
@@ -98,16 +129,34 @@ public class FriendSelectorFragment extends Fragment {
 			c.moveToFirst();
 			String name = c.getString(0);
 			mCreep.setName(name);
+			// mCreep.setNumber(number)
 			setCreepView(name);
 			c.close();
 		}
 	}
 
 	/* Changes friend name text from default to reflect contact choice */
-	public void setCreepView(String text) {
+	private void setCreepView(String text) {
 		TextView textView = (TextView) getView().findViewById(
 				R.id.friend_nameText);
 		textView.setText(text);
+	}
+
+	private long parseFollowTime(View v) {
+		long time;
+		TextView tv = (TextView) v.findViewById(R.id.follow_time);
+		String hr = tv.getText().subSequence(0, 1).toString();
+		String min = tv.getText().subSequence(6, 7).toString();
+		// Check for digits only
+		String regex = "\\d+";
+		if (hr.matches(regex) && min.matches(regex)) {
+			int hrInt = Integer.parseInt(hr);
+			int minInt = Integer.parseInt(hr);
+			time = (long) (hrInt * 60 + minInt) * 60 * 1000; // to ms
+		} else {
+			time = (long) 1 * 60 * 60 * 1000; // default return 1 hr in ms
+		}
+		return time;
 	}
 
 	/* Builds the Activity Bar Menu */

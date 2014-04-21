@@ -19,17 +19,17 @@ public class CreepLab {
 			for (int i = 0; i < 3; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
-				c.setDateStarted(now);
+			c.setTimeMade(now.getTime());
 				c.setName("Your Friend #" + (i + 1));
-				c.setFollowTime(i * 1000 * 60 * 60 * 5);
+			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 				mCreepsByYou.add(c);
 			}
-			for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 8; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
-				c.setDateStarted(now);
+			c.setTimeMade(now.getTime());
 				c.setName("Hot Chick #" + (i + 1));
-				c.setFollowTime(i * 1000 * 60 * 60 * 5);
+			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 				mCreepsOnYou.add(c);
 			}
 	}

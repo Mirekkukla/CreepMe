@@ -3,17 +3,17 @@ package com.mordor.creepme;
 import java.util.Date;
 import java.util.UUID;
 
-import android.media.Image;
+import android.graphics.Bitmap;
 
 public class Creep {
 	private String mName;
 	private String mNumber;
-	private Image mProfilePic;
+	private Bitmap mProfilePic;
 	private long mFollowTime;
 	private long mTimeRemaining;
 	private final UUID mId;
-	private Date mDateMade;
-	private Date mDateStarted;
+	private long mTimeMade;
+	private long mTimeStarted;
 
 	public Creep() {
 		mId = UUID.randomUUID();
@@ -48,15 +48,15 @@ public class Creep {
 	 */
 	public long getTimeRemaining() {
 		Date now = new Date();
-		mTimeRemaining = now.getTime() - mDateStarted.getTime();
+		mTimeRemaining = now.getTime() - mTimeStarted;
 		return mTimeRemaining;
 	}
 
-	public Image getProfilePic() {
+	public Bitmap getProfilePic() {
 		return mProfilePic;
 	}
 
-	public void setProfilePic(Image pic) {
+	public void setProfilePic(Bitmap pic) {
 		mProfilePic = pic;
 	}
 
@@ -64,19 +64,23 @@ public class Creep {
 		return mId;
 	}
 
-	public void setDateMade(Date date) {
-		mDateMade = date;
+	public void setTimeMade(long time) {
+		mTimeMade = time;
 	}
 
-	public Date getDateMade() {
-		return mDateMade;
+	public long getTimeMade() {
+		return mTimeMade;
 	}
 
-	public void setDateStarted(Date date) {
-		mDateStarted = date;
+	public void setDateStarted(long time) {
+		mTimeStarted = time;
 	}
 
-	public Date getDateStarted() {
-		return mDateStarted;
+	public long getTimeStarted() {
+		return mTimeStarted;
+	}
+
+	public void setTimeStarted(long time) {
+		mTimeStarted = time;
 	}
 }
