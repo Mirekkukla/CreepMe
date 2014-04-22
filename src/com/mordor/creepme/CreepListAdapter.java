@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private final Context context;
@@ -60,23 +62,39 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			holder = (CreepHolder) convertView.getTag();
 		}
 
+		// Handle clicking on listview item
 		convertView.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
-				// Do something
+				if (creepData.get(position).isByYou()) {
+					Toast.makeText(context, "Don't touch me there",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(context, "That tickles...",
+							Toast.LENGTH_SHORT)
+							.show();
+				}
+
 			}
 
 		});
 
-		holder.checkBox.setChecked(false);
+		// Handle checkbox actions, states
+		holder.checkBox.setChecked(creepData.get(position).getIsChecked());
+		holder.checkBox.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				creepData.get(position).setIsChecked(!creepData.get(position).getIsChecked());
+			}
+		});
+
 		// holder.profilePic.setImageDrawable(creepData.get(position).getProfilePic());
 		holder.name.setText(creepData.get(position).getName());
-		// holder.timeLeft.setText(creepData.get(position).getFollowTime())
+		// holder.timeLeft.setText(creepData.get(position).getFollowTime());
 		tv = holder.timeLeft;
 		counter = new MyCountDownTimer(creepData.get(position).getFollowTime(),
-				1000);
-		counter.start();
+				1);
+		// counter.start();
 		// holder.gps.setImageDrawable(creepData.get(position).get)
 
 		return convertView;
@@ -102,6 +120,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
 			String text = (Integer.toString(hr) + ":" + Integer.toString(min)
 					+ ":" + Integer.toString(sec));
+			Log.i("ticker", text);
 			tv.setText(text);
 		}
 

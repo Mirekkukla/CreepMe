@@ -16,13 +16,15 @@ public class CreepLab {
 		mCreepsByYou = new ArrayList<Creep>();
 		mCreepsOnYou = new ArrayList<Creep>();
 		// Temp list population
-			for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 2; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
 			c.setTimeMade(now.getTime());
 				c.setName("Your Friend #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
-				mCreepsByYou.add(c);
+			c.setByYou(true);
+			c.setIsChecked(false);
+			mCreepsByYou.add(c);
 			}
 		for (int i = 0; i < 8; i++) {
 				Date now = new Date();
@@ -30,7 +32,9 @@ public class CreepLab {
 			c.setTimeMade(now.getTime());
 				c.setName("Hot Chick #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
-				mCreepsOnYou.add(c);
+			c.setByYou(false);
+			c.setIsChecked(false);
+			mCreepsOnYou.add(c);
 			}
 	}
 
@@ -65,4 +69,49 @@ public class CreepLab {
 		}
 		return null;
 	}
+
+	public void addCreep(Creep c) {
+		if (c.isByYou()) {
+			mCreepsByYou.add(c);
+		} else if (!c.isByYou()) {
+			mCreepsOnYou.add(c);
+		} else {
+			// c doesn't exist
+		}
+	}
+
+	public void removeCreep(Creep c) {
+		if(c.isByYou()) {
+			mCreepsByYou.remove(mCreepsByYou.indexOf(c));
+		} else if (!c.isByYou()) {
+			mCreepsOnYou.remove(mCreepsOnYou.indexOf(c));
+		} else {
+			// c doesn't exist
+		}
+	}
+
+	public void removeSelections() {
+		// Remove all checked creeps
+		for (int i = 0; i < mCreepsOnYou.size(); i++) {
+			if (mCreepsOnYou.get(i).getIsChecked()) {
+				mCreepsOnYou.remove(i);
+				i--;
+			}
+		}
+		for (int i = 0; i < mCreepsByYou.size(); i++) {
+			if (mCreepsByYou.get(i).getIsChecked()) {
+				mCreepsByYou.remove(i);
+				i--;
+			}
+		}
+
+		// Set all remaining creeps to unchecked
+		for (int i = 0; i < mCreepsOnYou.size(); i++) {
+			mCreepsOnYou.get(i).setIsChecked(false);
+		}
+		for (int i = 0; i < mCreepsByYou.size(); i++) {
+			mCreepsByYou.get(i).setIsChecked(false);
+		}
+	}
+
 }

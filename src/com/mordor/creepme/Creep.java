@@ -14,9 +14,19 @@ public class Creep {
 	private final UUID mId;
 	private long mTimeMade;
 	private long mTimeStarted;
+	public Boolean mIsByYou;
+	public Boolean mIsChecked;
 
 	public Creep() {
 		mId = UUID.randomUUID();
+	}
+
+	public Boolean isByYou() {
+		return mIsByYou;
+	}
+
+	public void setByYou(Boolean bool) {
+		mIsByYou = bool;
 	}
 
 	public String getName() {
@@ -72,15 +82,19 @@ public class Creep {
 		return mTimeMade;
 	}
 
-	public void setDateStarted(long time) {
-		mTimeStarted = time;
-	}
-
 	public long getTimeStarted() {
 		return mTimeStarted;
 	}
 
 	public void setTimeStarted(long time) {
 		mTimeStarted = time;
+	}
+
+	public void setIsChecked(Boolean bool) {
+		mIsChecked = bool;
+	}
+
+	public Boolean getIsChecked() {
+		return mIsChecked;
 	}
 }

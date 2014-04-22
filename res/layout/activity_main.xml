@@ -35,7 +35,6 @@
 	        android:layout_marginLeft="25dp"
 	        android:layout_marginRight="25dp"
 	        android:text="@string/creep_new_friend"
-	        android:textStyle="bold"
 	        android:layout_weight="0"
 	        android:onClick="newFriendSelector" />
 	    
@@ -71,8 +70,8 @@
 	        android:layout_marginLeft="25dp"
 	        android:layout_marginRight="25dp"
 	        android:text="@string/cancel_selections"
-	        android:textStyle="bold"
-	        android:layout_weight="0" />
+	        android:layout_weight="0"
+	        android:onClick="cancelSelections" />
 	
 	</LinearLayout>
 

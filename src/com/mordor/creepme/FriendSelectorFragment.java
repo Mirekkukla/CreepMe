@@ -75,6 +75,12 @@ public class FriendSelectorFragment extends Fragment {
 				Date currDate = new Date();
 				mCreep.setTimeMade(currDate.getTime());
 
+				// Default to unchecked
+				mCreep.setIsChecked(false);
+
+				// You're the creep
+				mCreep.setByYou(true);
+
 				// Set profile pic
 				// ImageView iv = (ImageView) v
 				// .findViewById(R.id.selector_profilePic);
@@ -91,6 +97,7 @@ public class FriendSelectorFragment extends Fragment {
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
+				MainActivity.sLab.addCreep(mCreep);
 
 				Intent i = new Intent(getActivity(), MainActivity.class);
 				getActivity().startActivity(i);
