@@ -3,6 +3,8 @@ package com.mordor.creepme;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
+	private static final String TAG = "com.mordor.creepme.MainActivity";
 	public static CreepLab sLab;
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
@@ -36,6 +39,8 @@ public class MainActivity extends Activity {
 		lv1.setAdapter(adp1);
 		lv2.setAdapter(adp2);
 
+		implementListViewTimer();
+
 	}
 
 	/* Defines and activates intent that opens FriendSelector activity */
@@ -47,20 +52,20 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		// Update lists
 		adp1.notifyDataSetChanged();
 		adp2.notifyDataSetChanged();
 	}
 
 	public void cancelSelections(View v) {
-		adp1.notifyDataSetChanged();
-		adp2.notifyDataSetChanged();
-
 		try {
-			sLab.removeSelections();
+			// If nothing gets removed, nothing was selected
+			if (!sLab.removeSelections()) {
+				Toast.makeText(this, "Nothing selected", Toast.LENGTH_SHORT)
+						.show();
+			}
 		} catch (Exception e) {
-			Toast.makeText(MainActivity.this, "Nothing selected",
-					Toast.LENGTH_SHORT)
-					.show();
+			Log.e(TAG, "Exception error at cancelSelections()");
 		}
 		adp1.notifyDataSetChanged();
 		adp2.notifyDataSetChanged();
@@ -72,5 +77,24 @@ public class MainActivity extends Activity {
 		MenuInflater inflater = new MenuInflater(this);
 		inflater.inflate(R.menu.fragment_main_options, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	public void implementListViewTimer() {
+		// Timer counts down every second, by 1000 ms intervals
+		new CountDownTimer(1000, 1000) {
+			@Override
+			public void onTick(long millisUntilFinished) {
+
+			}
+
+			@Override
+			public void onFinish() {
+				sLab.checkForCompletions();
+				adp1.notifyDataSetChanged();
+				adp2.notifyDataSetChanged();
+				implementListViewTimer();
+			}
+
+		}.start();
 	}
 }

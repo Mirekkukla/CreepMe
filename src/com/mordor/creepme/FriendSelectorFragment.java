@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,8 @@ public class FriendSelectorFragment extends Fragment {
 
 	private Button mFriendButton;
 	private Button mStartCreepButton;
+	private EditText hrs;
+	private EditText mins;
 
 	/* Builds main fragment view for FriendSelector */
 	@TargetApi(11)
@@ -60,18 +63,19 @@ public class FriendSelectorFragment extends Fragment {
 			}
 		});
 
+		hrs = (EditText) v.findViewById(R.id.hrs);
+		mins = (EditText) v.findViewById(R.id.mins);
+
 		// Defines and wires up button to set creep and begin verification
 		mStartCreepButton = (Button) v.findViewById(R.id.selector_finalButton);
 		mStartCreepButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-				// Set follow time
-				// mCreep.setFollowTime(parseFollowTime(v));
-				mCreep.setFollowTime((long) 5 * 60 * 60 * 1000); // default 5
-																	// hrs
+				// Set follow time, milliseconds
+				mCreep.setFollowTime(parseFollowTime(v));
 
-				// Set time made
+				// Set time made, milliseconds
 				Date currDate = new Date();
 				mCreep.setTimeMade(currDate.getTime());
 
@@ -80,6 +84,10 @@ public class FriendSelectorFragment extends Fragment {
 
 				// You're the creep
 				mCreep.setByYou(true);
+
+				// Creep has not yet started
+				mCreep.setIsStarted(false);
+				mCreep.setIsComplete(false);
 
 				// Set profile pic
 				// ImageView iv = (ImageView) v
@@ -151,18 +159,13 @@ public class FriendSelectorFragment extends Fragment {
 
 	private long parseFollowTime(View v) {
 		long time;
-		TextView tv = (TextView) v.findViewById(R.id.follow_time);
-		String hr = tv.getText().subSequence(0, 1).toString();
-		String min = tv.getText().subSequence(6, 7).toString();
-		// Check for digits only
-		String regex = "\\d+";
-		if (hr.matches(regex) && min.matches(regex)) {
-			int hrInt = Integer.parseInt(hr);
-			int minInt = Integer.parseInt(hr);
-			time = (long) (hrInt * 60 + minInt) * 60 * 1000; // to ms
-		} else {
-			time = (long) 1 * 60 * 60 * 1000; // default return 1 hr in ms
-		}
+		int hours, minutes;
+
+		// Get values from EditTexts - default 05:00:00
+		hours = Integer.parseInt(hrs.getText().toString());
+		minutes = Integer.parseInt(mins.getText().toString());
+
+		time = ((hours * 60) + minutes) * 60 * 1000; // to ms
 		return time;
 	}
 

@@ -14,8 +14,10 @@ public class Creep {
 	private final UUID mId;
 	private long mTimeMade;
 	private long mTimeStarted;
-	public Boolean mIsByYou;
-	public Boolean mIsChecked;
+	private Boolean mIsByYou;
+	private Boolean mIsChecked;
+	private Boolean mIsStarted;
+	private Boolean mIsComplete;
 
 	public Creep() {
 		mId = UUID.randomUUID();
@@ -97,4 +99,21 @@ public class Creep {
 	public Boolean getIsChecked() {
 		return mIsChecked;
 	}
+
+	public void setIsStarted(Boolean bool) {
+		mIsStarted = bool;
+	}
+
+	public Boolean getIsStarted() {
+		return mIsStarted;
+	}
+
+	public void setIsComplete(Boolean bool) {
+		mIsComplete = bool;
+	}
+
+	public Boolean getIsComplete() {
+		return mIsComplete;
+	}
+
 }

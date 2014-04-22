@@ -16,7 +16,7 @@ public class CreepLab {
 		mCreepsByYou = new ArrayList<Creep>();
 		mCreepsOnYou = new ArrayList<Creep>();
 		// Temp list population
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 7; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
 			c.setTimeMade(now.getTime());
@@ -24,9 +24,11 @@ public class CreepLab {
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setByYou(true);
 			c.setIsChecked(false);
+			c.setIsStarted(false);
+			c.setIsComplete(false);
 			mCreepsByYou.add(c);
 			}
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 2; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
 			c.setTimeMade(now.getTime());
@@ -34,6 +36,8 @@ public class CreepLab {
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setByYou(false);
 			c.setIsChecked(false);
+			c.setIsStarted(false);
+			c.setIsComplete(false);
 			mCreepsOnYou.add(c);
 			}
 	}
@@ -90,18 +94,23 @@ public class CreepLab {
 		}
 	}
 
-	public void removeSelections() {
+	public Boolean removeSelections() {
+		Boolean removed = false;
 		// Remove all checked creeps
 		for (int i = 0; i < mCreepsOnYou.size(); i++) {
 			if (mCreepsOnYou.get(i).getIsChecked()) {
 				mCreepsOnYou.remove(i);
-				i--;
+				removed = true;
+				if (i != 0)
+					i--;
 			}
 		}
 		for (int i = 0; i < mCreepsByYou.size(); i++) {
 			if (mCreepsByYou.get(i).getIsChecked()) {
 				mCreepsByYou.remove(i);
-				i--;
+				removed = true;
+				if (i != 0)
+					i--;
 			}
 		}
 
@@ -111,6 +120,25 @@ public class CreepLab {
 		}
 		for (int i = 0; i < mCreepsByYou.size(); i++) {
 			mCreepsByYou.get(i).setIsChecked(false);
+		}
+		return removed;
+	}
+
+	public void checkForCompletions() {
+		// Remove all completed creeps
+		for (int i = 0; i < mCreepsOnYou.size(); i++) {
+			if (mCreepsOnYou.get(i).getIsComplete()) {
+				mCreepsOnYou.remove(i);
+				if (i != 0)
+					i--;
+			}
+		}
+		for (int i = 0; i < mCreepsByYou.size(); i++) {
+			if (mCreepsByYou.get(i).getIsComplete()) {
+				mCreepsByYou.remove(i);
+				if (i != 0)
+					i--;
+			}
 		}
 	}
 

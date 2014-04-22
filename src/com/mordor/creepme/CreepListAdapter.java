@@ -1,11 +1,12 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,7 +22,9 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private final int layoutResourceId;
 	private final ArrayList<Creep> creepData;
 	private CountDownTimer counter;
+	private HashMap mCounterList;
 	private TextView tv;
+	private String debugTag;
 
 	public CreepListAdapter(Context context, int layoutResourceId,
 			ArrayList<Creep> creepData) {
@@ -62,7 +65,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			holder = (CreepHolder) convertView.getTag();
 		}
 
-		// Handle clicking on listview item
+		// Handle clicking on ListView item
 		convertView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -79,7 +82,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 
 		});
 
-		// Handle checkbox actions, states
+		// Handle CheckBox actions, states
 		holder.checkBox.setChecked(creepData.get(position).getIsChecked());
 		holder.checkBox.setOnClickListener(new OnClickListener() {
 			@Override
@@ -90,11 +93,38 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 
 		// holder.profilePic.setImageDrawable(creepData.get(position).getProfilePic());
 		holder.name.setText(creepData.get(position).getName());
-		// holder.timeLeft.setText(creepData.get(position).getFollowTime());
+
+		// Update creep time left
 		tv = holder.timeLeft;
-		counter = new MyCountDownTimer(creepData.get(position).getFollowTime(),
-				1);
-		// counter.start();
+		Date currT = new Date();
+		if (!creepData.get(position).getIsStarted()) {
+			creepData.get(position).setIsStarted(true);
+			creepData.get(position).setTimeStarted(currT.getTime());
+		}
+		if (tv != null) {
+			long millisToFinish = creepData.get(position).getFollowTime()
+					- (currT.getTime() - creepData.get(position)
+							.getTimeStarted());
+			if (millisToFinish > 0) {
+				int sec = (int) (millisToFinish / 1000) % 60;
+				int min = (int) ((millisToFinish / (1000 * 60)) % 60);
+				int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
+				String seconds = Integer.toString(sec);
+				String minutes = Integer.toString(min);
+				String hours = Integer.toString(hr);
+				if (seconds.length() < 2)
+					seconds = "0" + seconds;
+				if (minutes.length() < 2)
+					minutes = "0" + minutes;
+
+				String text = (hours + ":" + minutes + ":" + seconds);
+				tv.setText(text);
+			} else {
+				creepData.get(position).setIsComplete(true);
+				tv.setText("--:--:--");
+			}
+		}
+
 		// holder.gps.setImageDrawable(creepData.get(position).get)
 
 		return convertView;
@@ -106,28 +136,5 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		TextView name;
 		TextView timeLeft;
 		ImageView gps;
-	}
-
-	public class MyCountDownTimer extends CountDownTimer {
-		public MyCountDownTimer(long startTime, long interval) {
-			super(startTime, interval);
-		}
-
-		@Override
-		public void onTick(long millisToFinish) {
-			int sec = (int) (millisToFinish / 1000) % 60;
-			int min = (int) ((millisToFinish / (1000 * 60)) % 60);
-			int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
-			String text = (Integer.toString(hr) + ":" + Integer.toString(min)
-					+ ":" + Integer.toString(sec));
-			Log.i("ticker", text);
-			tv.setText(text);
-		}
-
-		@Override
-		public void onFinish() {
-			// end creep
-			tv.setText("--:--:--");
-		}
 	}
 }
