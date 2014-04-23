@@ -16,12 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class CreepMapFragment extends Fragment {
 	private Context context;
-	private TextView lat, lon;
 	private LocationManager locationManager;
+	private final Double latVictim = 43.4600;
+	private final Double lonVictim = -110.7500;
 
 	@TargetApi(11)
 	@Override
@@ -42,9 +42,6 @@ public class CreepMapFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_map, container, false);
 
 		context = getActivity();
-
-		lat = (TextView) view.findViewById(R.id.latitudeText);
-		lon = (TextView) view.findViewById(R.id.longitudeText);
 
 		locationManager = (LocationManager) getActivity()
 				.getSystemService(context.LOCATION_SERVICE);
@@ -101,8 +98,6 @@ public class CreepMapFragment extends Fragment {
 	}
 
 	private void updateLocation(Location location) {
-		lat.setText(Double.toString(location.getLatitude()));
-		lon.setText(Double.toString(location.getLongitude()));
 		Log.i("here", "changed latlong");
 	}
 }

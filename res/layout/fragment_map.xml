@@ -12,20 +12,10 @@ android:orientation="vertical" >
 	   	android:gravity="center_horizontal"
 	    android:background="#d3d3d3" />
 	
-	<TextView
-	    android:id="@+id/latitudeText"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	  	android:text="@string/latitude"
-	   	android:gravity="center_horizontal"
-	    android:background="#d3d3d3" />
-	
-	<TextView
-	    android:id="@+id/longitudeText"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	  	android:text="@string/longitude"
-	   	android:gravity="center_horizontal"
-	    android:background="#d3d3d3" />
+	<fragment
+    	class="com.google.android.gms.maps.MapFragment"
+    	android:id="@+id/creepMapFragment"
+    	android:layout_width="match_parent"
+    	android:layout_height="fill_parent"/>
 
 </LinearLayout>
