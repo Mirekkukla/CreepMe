@@ -1,42 +1,27 @@
 package com.mordor.creepme;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 public class CreepMapFragment extends Fragment {
-
-	private final BroadcastReceiver mLocationReceiver = new LocationReceiver() {
-
-		@Override
-		protected void onLocationReceived(Context context, Location loc) {
-			mLastLocation = loc;
-		}
-
-		@Override
-		protected void onProviderEnabledChanged(boolean enabled) {
-			int toastText = enabled ? R.string.gps_enabled
-					: R.string.gps_disabled;
-			Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
-		}
-	};
-
-	private CreepMapManager mCreepMapManager;
-	private CreepMap mMap;
-	private Location mLastLocation;
+	private Context context;
+	private TextView lat, lon;
+	private LocationManager locationManager;
 
 	@TargetApi(11)
 	@Override
@@ -44,13 +29,11 @@ public class CreepMapFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
-		mCreepMapManager = CreepMapManager.get(getActivity());
 
 		// Check for compatibility, display home as up
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-
 	}
 
 	@Override
@@ -58,8 +41,40 @@ public class CreepMapFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_map, container, false);
 
-		mMap = new CreepMap();
-		// mCreepMapManager.startLocationUpdates();
+		context = getActivity();
+
+		lat = (TextView) view.findViewById(R.id.latitudeText);
+		lon = (TextView) view.findViewById(R.id.longitudeText);
+
+		locationManager = (LocationManager) getActivity()
+				.getSystemService(context.LOCATION_SERVICE);
+
+		LocationListener locationListener = new LocationListener() {
+			@Override
+			public void onLocationChanged(Location location) {
+				// Called when a new location is found by the network location
+				// provider.
+				updateLocation(location);
+			}
+
+			@Override
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+			}
+
+			@Override
+			public void onProviderEnabled(String provider) {
+			}
+
+			@Override
+			public void onProviderDisabled(String provider) {
+			}
+		};
+
+		// Register the listener with the Location Manager to receive location
+		// updates
+		locationManager.requestLocationUpdates(
+				LocationManager.NETWORK_PROVIDER, 100, 0, locationListener);
 
 		return view;
 	}
@@ -85,17 +100,9 @@ public class CreepMapFragment extends Fragment {
 		}
 	}
 
-	@Override
-	public void onStart() {
-		super.onStart();
-		getActivity().registerReceiver(mLocationReceiver,
-				new IntentFilter(CreepMapManager.ACTION_LOCATION));
+	private void updateLocation(Location location) {
+		lat.setText(Double.toString(location.getLatitude()));
+		lon.setText(Double.toString(location.getLongitude()));
+		Log.i("here", "changed latlong");
 	}
-
-	@Override
-	public void onStop() {
-		getActivity().unregisterReceiver(mLocationReceiver);
-		super.onStop();
-	}
-
 }
