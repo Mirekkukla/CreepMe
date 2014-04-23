@@ -15,5 +15,6 @@
     <string name="creep_time">SET DURATION:</string>
     <string name="selector_final">CREEP THEM</string>
     <string name="gps_enabled">GPS Enabled</string>
+    <string name="gps_disabled">GPS Disabled</string>
 
 </resources>

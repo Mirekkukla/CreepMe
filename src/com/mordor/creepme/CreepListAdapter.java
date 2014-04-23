@@ -2,11 +2,10 @@ package com.mordor.creepme;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.CountDownTimer;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,10 +20,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private final Context context;
 	private final int layoutResourceId;
 	private final ArrayList<Creep> creepData;
-	private CountDownTimer counter;
-	private HashMap mCounterList;
 	private TextView tv;
-	private String debugTag;
 
 	public CreepListAdapter(Context context, int layoutResourceId,
 			ArrayList<Creep> creepData) {
@@ -70,8 +66,8 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			@Override
 			public void onClick(View v) {
 				if (creepData.get(position).isByYou()) {
-					Toast.makeText(context, "Don't touch me there",
-							Toast.LENGTH_SHORT).show();
+					Intent i = new Intent(context, CreepMapActivity.class);
+					context.startActivity(i);
 				} else {
 					Toast.makeText(context, "That tickles...",
 							Toast.LENGTH_SHORT)

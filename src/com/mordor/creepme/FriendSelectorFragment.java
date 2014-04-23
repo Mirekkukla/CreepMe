@@ -45,7 +45,7 @@ public class FriendSelectorFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_friend_selector, parent,
 				false);
 
-		// Check for compatibility
+		// Check for compatibility, display home as up
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		}

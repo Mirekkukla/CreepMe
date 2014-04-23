@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
 
 	/* Defines and activates intent that opens FriendSelector activity */
 	public void newFriendSelector(View v) {
-		Intent i = new Intent(this, FriendSelector.class);
+		Intent i = new Intent(this, FriendSelectorActivity.class);
 		startActivity(i);
 	}
 
