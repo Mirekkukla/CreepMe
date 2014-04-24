@@ -126,8 +126,8 @@ public class Creep {
 		return mLatitude;
 	}
 
-	public void setLongitude(Double lon) {
-		mLongitude = lon;
+	public void setLongitude(Double lng) {
+		mLongitude = lng;
 	}
 
 	public Double getLongitude() {

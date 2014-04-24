@@ -67,13 +67,13 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 				if (creepData.get(position).isByYou()) {
 					Intent i = new Intent(context, CreepMapActivity.class);
 					i.putExtra("lat", creepData.get(position).getLatitude());
-					i.putExtra("lon", creepData.get(position).getLongitude());
+					i.putExtra("lng", creepData.get(position).getLongitude());
 					i.putExtra("name", creepData.get(position).getName());
 					context.startActivity(i);
 				} else {
 					Intent i = new Intent(context, CreepMapActivity.class);
 					i.putExtra("lat", creepData.get(position).getLatitude());
-					i.putExtra("lon", creepData.get(position).getLongitude());
+					i.putExtra("lng", creepData.get(position).getLongitude());
 					i.putExtra("name", creepData.get(position).getName());
 					context.startActivity(i);
 				}

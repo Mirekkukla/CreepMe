@@ -1,6 +1,5 @@
 package com.mordor.creepme;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
@@ -23,9 +22,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class CreepMapActivity extends Activity {
-	private String dirPoints;
+	private String mDirPoints;
+	private String mName;
 
-	@TargetApi(11)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,14 +32,17 @@ public class CreepMapActivity extends Activity {
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			TextView name = (TextView) findViewById(R.id.map_infoText);
-			name.setText(extras.getString("name"));
 			Double mLatVictim = extras.getDouble("lat");
-			Double mLonVictim = extras.getDouble("lon");
-			LatLng victim = new LatLng(mLatVictim, mLonVictim);
-			dirPoints = ("http://maps.google.com/maps?f=&daddr="
+			Double mLngVictim = extras.getDouble("lng");
+			mName = extras.getString("name");
+
+			TextView nameTextView = (TextView) findViewById(R.id.map_infoText);
+			nameTextView.setText(mName);
+
+			LatLng victim = new LatLng(mLatVictim, mLngVictim);
+			mDirPoints = ("http://maps.google.com/maps?f=&daddr="
 					+ Double.toString(mLatVictim) + ", " + Double
-					.toString(mLonVictim));
+					.toString(mLngVictim));
 
 			// Get a handle to the Map Fragment
 			final GoogleMap map = ((MapFragment) getFragmentManager()
@@ -48,14 +50,14 @@ public class CreepMapActivity extends Activity {
 
 			map.setMyLocationEnabled(true);
 			LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-	        String provider = locationManager.GPS_PROVIDER;
+			String provider = LocationManager.GPS_PROVIDER;
 	        Location location = locationManager.getLastKnownLocation(provider);
 
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(victim, 13));
 			if (location != null) {
 				double mLatUser = location.getLatitude();
-				double mLonUser = location.getLongitude();
-				LatLng user = new LatLng(mLatUser, mLonUser);
+				double mLngUser = location.getLongitude();
+				LatLng user = new LatLng(mLatUser, mLngUser);
 
 				LatLngBounds.Builder builder = new LatLngBounds.Builder();
 				final LatLngBounds bounds = builder.include(victim)
@@ -64,26 +66,17 @@ public class CreepMapActivity extends Activity {
 
 				try {
 					map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,
-							50));
+							75));
 				} catch (Exception e) {
 					// layout not yet initialized
 			        final View mapView = getFragmentManager().findFragmentById(R.id.creepMapFragment).getView();
 			        if (mapView.getViewTreeObserver().isAlive()) {
 			            mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-
-			                @SuppressWarnings("deprecation")
-			                @SuppressLint("NewApi")
-			                // We check which build version we are using.
-			                @Override
+							@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+							@Override
 			                public void onGlobalLayout() {
-			                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-			                        mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-			                    } else {
-			                        mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-			                    }
-												map.moveCamera(CameraUpdateFactory
-														.newLatLngBounds(
-																bounds, 50));
+			                	mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+								map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 75));
 			                }
 			            });
 			        }
@@ -94,14 +87,12 @@ public class CreepMapActivity extends Activity {
 			} else {
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(victim, 13));
 				map.addMarker(new MarkerOptions().title("Victim")
-						.snippet("< who yer creepin' >").position(victim));
+						.snippet(mName).position(victim));
 			}
 		}
 
-		// Check for compatibility, display home as up
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			this.getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
+		// Display home as up
+		this.getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	/* Deals with Activity Bar and Menu item selections */
@@ -119,9 +110,9 @@ public class CreepMapActivity extends Activity {
 	}
 
 	public void getDirections(View v) {
-		if (dirPoints != "") {
+		if (mDirPoints != "") {
 			Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-					Uri.parse(dirPoints));
+					Uri.parse(mDirPoints));
 			startActivity(intent);
 		}
 

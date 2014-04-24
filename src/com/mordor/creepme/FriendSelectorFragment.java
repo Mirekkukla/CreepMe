@@ -2,12 +2,10 @@ package com.mordor.creepme;
 
 import java.util.Date;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -34,7 +32,6 @@ public class FriendSelectorFragment extends Fragment {
 	private EditText mins;
 
 	/* Builds main fragment view for FriendSelector */
-	@TargetApi(11)
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
 			Bundle savedInstanceState) {
@@ -46,10 +43,7 @@ public class FriendSelectorFragment extends Fragment {
 				false);
 
 		// Check for compatibility, display home as up
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
-
+		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		mCreep = new Creep();
 
 		// Defines and wires up button linked to contacts app to choose friend
