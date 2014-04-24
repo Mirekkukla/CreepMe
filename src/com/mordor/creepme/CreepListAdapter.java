@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private final Context context;
@@ -69,11 +68,14 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 					Intent i = new Intent(context, CreepMapActivity.class);
 					i.putExtra("lat", creepData.get(position).getLatitude());
 					i.putExtra("lon", creepData.get(position).getLongitude());
+					i.putExtra("name", creepData.get(position).getName());
 					context.startActivity(i);
 				} else {
-					Toast.makeText(context, "That tickles...",
-							Toast.LENGTH_SHORT)
-							.show();
+					Intent i = new Intent(context, CreepMapActivity.class);
+					i.putExtra("lat", creepData.get(position).getLatitude());
+					i.putExtra("lon", creepData.get(position).getLongitude());
+					i.putExtra("name", creepData.get(position).getName());
+					context.startActivity(i);
 				}
 
 			}

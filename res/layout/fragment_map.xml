@@ -5,7 +5,7 @@ android:layout_height="match_parent"
 android:orientation="vertical" >
     
 	<TextView
-	    android:id="@+id/map_info_text"
+	    android:id="@+id/map_infoText"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	  	android:text="@string/default_friend_name"
@@ -17,12 +17,13 @@ android:orientation="vertical" >
     	android:id="@+id/creepMapFragment"
     	android:layout_width="match_parent"
     	android:layout_height="0dp"
-    	android:layout_weight="1"/>
+    	android:layout_weight="1" />
 	
 	<Button 
 	    android:id="@+id/directionsButton"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:text="@string/directions" />
+	    android:text="@string/directions"
+	    android:onClick="getDirections" />
 
 </LinearLayout>

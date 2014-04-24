@@ -1319,7 +1319,7 @@ containing a value of this type.
         public static final int image=0x7f06002a;
         public static final int listMode=0x7f060005;
         public static final int list_item=0x7f06002c;
-        public static final int map_info_text=0x7f06004e;
+        public static final int map_infoText=0x7f06004e;
         public static final int middle=0x7f060015;
         public static final int mins=0x7f06004c;
         public static final int never=0x7f06000d;

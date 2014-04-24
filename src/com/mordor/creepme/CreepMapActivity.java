@@ -3,14 +3,17 @@ package com.mordor.creepme;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +23,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class CreepMapActivity extends Activity {
+	private String dirPoints;
 
 	@TargetApi(11)
 	@Override
@@ -29,9 +33,14 @@ public class CreepMapActivity extends Activity {
 
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
+			TextView name = (TextView) findViewById(R.id.map_infoText);
+			name.setText(extras.getString("name"));
 			Double mLatVictim = extras.getDouble("lat");
 			Double mLonVictim = extras.getDouble("lon");
 			LatLng victim = new LatLng(mLatVictim, mLonVictim);
+			dirPoints = ("http://maps.google.com/maps?f=&daddr="
+					+ Double.toString(mLatVictim) + ", " + Double
+					.toString(mLonVictim));
 
 			// Get a handle to the Map Fragment
 			final GoogleMap map = ((MapFragment) getFragmentManager()
@@ -54,8 +63,7 @@ public class CreepMapActivity extends Activity {
 						.build();
 
 				try {
-					map.moveCamera(CameraUpdateFactory.newLatLngBounds(
-bounds,
+					map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,
 							50));
 				} catch (Exception e) {
 					// layout not yet initialized
@@ -108,6 +116,15 @@ bounds,
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	public void getDirections(View v) {
+		if (dirPoints != "") {
+			Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+					Uri.parse(dirPoints));
+			startActivity(intent);
+		}
+
 	}
 
 }
