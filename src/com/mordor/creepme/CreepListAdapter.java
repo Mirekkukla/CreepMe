@@ -67,6 +67,8 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			public void onClick(View v) {
 				if (creepData.get(position).isByYou()) {
 					Intent i = new Intent(context, CreepMapActivity.class);
+					i.putExtra("lat", creepData.get(position).getLatitude());
+					i.putExtra("lon", creepData.get(position).getLongitude());
 					context.startActivity(i);
 				} else {
 					Toast.makeText(context, "That tickles...",

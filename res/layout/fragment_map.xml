@@ -16,6 +16,13 @@ android:orientation="vertical" >
     	class="com.google.android.gms.maps.MapFragment"
     	android:id="@+id/creepMapFragment"
     	android:layout_width="match_parent"
-    	android:layout_height="fill_parent"/>
+    	android:layout_height="0dp"
+    	android:layout_weight="1"/>
+	
+	<Button 
+	    android:id="@+id/directionsButton"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/directions" />
 
 </LinearLayout>

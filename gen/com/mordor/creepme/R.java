@@ -1286,7 +1286,7 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f060019;
         public static final int action_menu_presenter=0x7f06001a;
         public static final int action_mode_close_button=0x7f060027;
-        public static final int action_settings=0x7f060050;
+        public static final int action_settings=0x7f060051;
         public static final int activity_chooser_view_content=0x7f060028;
         public static final int always=0x7f06000f;
         public static final int beginning=0x7f060014;
@@ -1298,6 +1298,7 @@ containing a value of this type.
         public static final int creep_new_friendButton=0x7f060041;
         public static final int default_activity_button=0x7f06002b;
         public static final int dialog=0x7f060012;
+        public static final int directionsButton=0x7f060050;
         public static final int disableHome=0x7f06000c;
         public static final int dropdown=0x7f060013;
         public static final int edit_query=0x7f060033;
@@ -1460,7 +1461,6 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f070026;
         public static final int action_settings=0x7f07002b;
-        public static final int altitude=0x7f07003a;
         public static final int app_name=0x7f070028;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -1561,21 +1561,16 @@ containing a value of this type.
         public static final int creep_new_friend=0x7f070029;
         public static final int creep_time=0x7f070033;
         public static final int default_friend_name=0x7f070032;
-        public static final int elapsed_time=0x7f07003b;
+        public static final int directions=0x7f070037;
         public static final int gps_disabled=0x7f070036;
         public static final int gps_enabled=0x7f070035;
         public static final int gps_enabled_warning=0x7f070030;
-        public static final int latitude=0x7f070038;
         /**  Location client code resources (prefix with location_client) 
          */
         public static final int location_client_powered_by_google=0x7f07001a;
-        public static final int longitude=0x7f070039;
         public static final int profile_pic_description=0x7f070031;
         public static final int selector_final=0x7f070034;
         public static final int selector_title=0x7f07002c;
-        public static final int start=0x7f07003c;
-        public static final int started=0x7f070037;
-        public static final int stop=0x7f07003d;
         public static final int who_creeping_you=0x7f07002e;
         public static final int who_you_creeping=0x7f07002d;
     }

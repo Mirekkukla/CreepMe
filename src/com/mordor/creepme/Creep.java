@@ -18,6 +18,8 @@ public class Creep {
 	private Boolean mIsChecked;
 	private Boolean mIsStarted;
 	private Boolean mIsComplete;
+	private Double mLatitude;
+	private Double mLongitude;
 
 	public Creep() {
 		mId = UUID.randomUUID();
@@ -114,6 +116,22 @@ public class Creep {
 
 	public Boolean getIsComplete() {
 		return mIsComplete;
+	}
+
+	public void setLatitude(Double lat) {
+		mLatitude = lat;
+	}
+
+	public Double getLatitude() {
+		return mLatitude;
+	}
+
+	public void setLongitude(Double lon) {
+		mLongitude = lon;
+	}
+
+	public Double getLongitude() {
+		return mLongitude;
 	}
 
 }
