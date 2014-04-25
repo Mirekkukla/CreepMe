@@ -22,11 +22,12 @@ public class CreepLab {
 			c.setTimeMade(now.getTime());
 				c.setName("Your Friend #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
+			c.setTimeStarted(now.getTime());
 			c.setLatitude(43.479786);
 			c.setLongitude(-110.762334);
 			c.setByYou(true);
 			c.setIsChecked(false);
-			c.setIsStarted(false);
+			c.setIsStarted(true);
 			c.setIsComplete(false);
 			mCreepsByYou.add(c);
 			}
@@ -36,11 +37,12 @@ public class CreepLab {
 			c.setTimeMade(now.getTime());
 				c.setName("Hot Chick #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
+			c.setTimeStarted(now.getTime());
 			c.setLatitude(43.59);
 			c.setLongitude(-110.8);
 			c.setByYou(false);
 			c.setIsChecked(false);
-			c.setIsStarted(false);
+			c.setIsStarted(true);
 			c.setIsComplete(false);
 			mCreepsOnYou.add(c);
 			}

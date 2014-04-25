@@ -1,35 +1,53 @@
 package com.mordor.creepme;
 
+import java.util.ArrayList;
 import java.util.Date;
 
-import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FriendSelectorFragment extends Fragment {
-	private static final int REQUEST_CONTACT = 2;
+public class FriendSelectorFragment extends Fragment implements
+		OnItemClickListener, OnItemSelectedListener {
+
+	// Initialize AutoComplete variables
+	AutoCompleteTextView textView = null;
+	private ArrayAdapter<String> adapter;
+
+	// Store contacts values in these ArrayLists
+	public static ArrayList<String> phoneValueArr = new ArrayList<String>();
+	public static ArrayList<String> nameValueArr = new ArrayList<String>();
+
+	EditText toNumber = null;
+	String toNumberValue = "";
 
 	private Creep mCreep;
 
-	private Button mFriendButton;
 	private Button mStartCreepButton;
 	private EditText hrs;
 	private EditText mins;
+	private TextView nameTextView;
 
 	/* Builds main fragment view for FriendSelector */
 	@Override
@@ -42,20 +60,29 @@ public class FriendSelectorFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_friend_selector, parent,
 				false);
 
-		// Check for compatibility, display home as up
+		// Display home as up
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
 		mCreep = new Creep();
 
-		// Defines and wires up button linked to contacts app to choose friend
-		mFriendButton = (Button)v.findViewById(R.id.friend_selectorButton);
-		mFriendButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(Intent.ACTION_PICK,
-						ContactsContract.Contacts.CONTENT_URI);
-				startActivityForResult(i, REQUEST_CONTACT);
-			}
-		});
+		// Initialize AutoCompleteTextView values
+
+		textView = (AutoCompleteTextView) v.findViewById(R.id.toNumber);
+		nameTextView = (TextView) v.findViewById(R.id.friend_nameText);
+
+		// Create adapter (will change to custom, to display phone # as well)
+		adapter = new ArrayAdapter<String>(getActivity(),
+				android.R.layout.two_line_list_item, android.R.id.text1,
+				new ArrayList<String>());
+		textView.setThreshold(1);
+
+		// Set adapter to AutoCompleteTextView
+		textView.setAdapter(adapter);
+		textView.setOnItemSelectedListener(this);
+		textView.setOnItemClickListener(this);
+
+		// Read contact data and add data to ArrayAdapter
+		// used by AutoCompleteTextView
+		readContactData();
 
 		hrs = (EditText) v.findViewById(R.id.hrs);
 		mins = (EditText) v.findViewById(R.id.mins);
@@ -99,6 +126,7 @@ public class FriendSelectorFragment extends Fragment {
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
+
 				MainActivity.sLab.addCreep(mCreep);
 
 				Intent i = new Intent(getActivity(), MainActivity.class);
@@ -117,38 +145,79 @@ public class FriendSelectorFragment extends Fragment {
 		return v;
 	}
 
-	/* Uses contact list to find friend when mFriendButton pressed */
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(resultCode != Activity.RESULT_OK) return;
+	// Read phone contact name and phone numbers
+	private void readContactData() {
+		final String[] PROJECTION = new String[] {
+				// ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+				ContactsContract.Contacts.DISPLAY_NAME,
+				ContactsContract.CommonDataKinds.Phone.NUMBER };
 
-		if (requestCode == REQUEST_CONTACT) {
-			Uri contactUri = data.getData();
-			String[] queryFields = new String[] { ContactsContract.Contacts.DISPLAY_NAME };
+		ContentResolver cr = getActivity().getBaseContext()
+				.getContentResolver();
+		Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, null, null, null);
+		if (cursor != null) {
+		    try {
+				// final int contactIdIndex =
+				// cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID);
+		        final int displayNameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+				final int phoneIndex = cursor
+						.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-			Cursor c = getActivity().getContentResolver().query(contactUri,
-					queryFields, null, null, null);
+				String name = "", phoneNumber = "";
+		        while (cursor.moveToNext()) {
+		            name = cursor.getString(displayNameIndex);
+					phoneNumber = cursor.getString(phoneIndex);
 
-			if(c.getCount() == 0) {
-				c.close();
-				return;
-			}
-
-			mCreep = new Creep();
-			c.moveToFirst();
-			String name = c.getString(0);
-			mCreep.setName(name);
-			// mCreep.setNumber(number)
-			setCreepView(name);
-			c.close();
+					// Add contacts name to adapter
+					adapter.add(name);
+					phoneValueArr.add(phoneNumber);
+					nameValueArr.add(name);
+		        }
+		    } finally {
+		        cursor.close();
+		    }
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
+			long arg3) {
+		// Blank
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		InputMethodManager imm = (InputMethodManager) getActivity()
+				.getSystemService(getActivity().INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+				.getWindowToken(), 0);
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// Get Array index value for selected name
+		int i = nameValueArr.indexOf("" + arg0.getItemAtPosition(arg2));
+		Log.i("here", Integer.toString(i));
+		// If name exist in name ArrayList
+		if (i >= 0) {
+
+			// Get Phone Number
+			toNumberValue = phoneValueArr.get(i);
+
+			InputMethodManager imm = (InputMethodManager) getActivity()
+					.getSystemService(getActivity().INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
+					.getWindowToken(), 0);
+		}
+		setCreepView(nameValueArr.get(i));
+		mCreep.setName(nameValueArr.get(i));
+		mCreep.setNumber(toNumberValue);
 	}
 
 	/* Changes friend name text from default to reflect contact choice */
 	private void setCreepView(String text) {
-		TextView textView = (TextView) getView().findViewById(
-				R.id.friend_nameText);
-		textView.setText(text);
+		nameTextView.setText(text);
 	}
 
 	private long parseFollowTime(View v) {

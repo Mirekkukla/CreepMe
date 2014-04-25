@@ -1308,7 +1308,6 @@ containing a value of this type.
         public static final int follow_time=0x7f060047;
         public static final int fragmentContainer=0x7f06003f;
         public static final int friend_nameText=0x7f060046;
-        public static final int friend_selectorButton=0x7f060049;
         public static final int gps_enabledImage=0x7f060048;
         public static final int home=0x7f060017;
         public static final int homeAsUp=0x7f060009;
@@ -1351,6 +1350,7 @@ containing a value of this type.
         public static final int tabMode=0x7f060006;
         public static final int terrain=0x7f060003;
         public static final int title=0x7f06002e;
+        public static final int toNumber=0x7f060049;
         public static final int top_action_bar=0x7f060023;
         public static final int up=0x7f060024;
         public static final int useLogo=0x7f060007;
