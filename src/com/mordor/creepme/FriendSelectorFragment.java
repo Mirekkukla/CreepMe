@@ -26,12 +26,11 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class FriendSelectorFragment extends Fragment implements
-		OnItemClickListener, OnItemSelectedListener {
+    OnItemClickListener, OnItemSelectedListener {
 
 	// Initialize AutoComplete variables
 	AutoCompleteTextView textView = null;
@@ -39,20 +38,18 @@ public class FriendSelectorFragment extends Fragment implements
 
 	// Store contacts values in HashMap
 	public Map<String, Contact> contactMap = new HashMap<String, Contact>();
-	private static ContentResolver cr;
 
 	EditText toNumber = null;
 	String toNumberValue = "";
 
-	private Creep mCreep;
+	private Creep creep;
 
-	private Button mStartCreepButton;
+	private Button startCreepButton;
 	private EditText hrs;
 	private EditText mins;
 	private TextView nameTextView;
-	private ImageView profileImageView;
 
-	/* Builds main fragment view for FriendSelector */
+	// Builds main fragment view for FriendSelector
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
 			Bundle savedInstanceState) {
@@ -65,17 +62,17 @@ public class FriendSelectorFragment extends Fragment implements
 
 		// Display home as up
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-		mCreep = new Creep();
+		creep = new Creep();
 
 		// Initialize AutoCompleteTextView values
 
-		textView = (AutoCompleteTextView) v.findViewById(R.id.toNumber);
+		textView = (AutoCompleteTextView) v.findViewById(R.id.to_numberAutoText);
 		nameTextView = (TextView) v.findViewById(R.id.friend_nameText);
 
 		// Create adapter (will change to custom, to display phone # as well)
 		adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.two_line_list_item, android.R.id.text1,
-				new ArrayList<String>());
+		    android.R.layout.two_line_list_item, android.R.id.text1,
+		    new ArrayList<String>());
 		textView.setThreshold(1);
 
 		// Set adapter to AutoCompleteTextView
@@ -87,40 +84,40 @@ public class FriendSelectorFragment extends Fragment implements
 		// used by AutoCompleteTextView
 		readContactData();
 
-		hrs = (EditText) v.findViewById(R.id.hrs);
-		mins = (EditText) v.findViewById(R.id.mins);
+		hrs = (EditText) v.findViewById(R.id.hrsEditText);
+		mins = (EditText) v.findViewById(R.id.minsEditText);
 
 		// Defines and wires up button to set creep and begin verification
-		mStartCreepButton = (Button) v.findViewById(R.id.selector_finalButton);
-		mStartCreepButton.setOnClickListener(new View.OnClickListener() {
+		startCreepButton = (Button) v.findViewById(R.id.selector_finalButton);
+		startCreepButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
 				// Set follow time, milliseconds
-				mCreep.setFollowTime(parseFollowTime(v));
+				creep.setFollowTime(parseFollowTime(v));
 
 				// Set time made, milliseconds
 				Date currDate = new Date();
-				mCreep.setTimeMade(currDate.getTime());
+				creep.setTimeMade(currDate.getTime());
 
 				// Default to unchecked
-				mCreep.setIsChecked(false);
+				creep.setIsChecked(false);
 
-				// You're the creep
-				mCreep.setByYou(true);
+				// You're the creeper
+				creep.setIsByYou(true);
 
 				// Creep has not yet started
-				mCreep.setIsStarted(false);
-				mCreep.setIsComplete(false);
+				creep.setIsStarted(false);
+				creep.setIsComplete(false);
 
-				if (mCreep.getName() == null) {
+				if (creep.getName() == null) {
 					Toast.makeText(getActivity(),
 							"Please choose creep victim first!",
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
 
-				MainActivity.sLab.addCreep(mCreep);
+				MainActivity.sLab.addCreep(creep);
 
 				Intent i = new Intent(getActivity(), MainActivity.class);
 				getActivity().startActivity(i);
@@ -138,40 +135,37 @@ public class FriendSelectorFragment extends Fragment implements
 		return v;
 	}
 
-	// Read phone contact name and phone numbers
+	// Read phone contact name and phone number(s)
 	private void readContactData() {
 		final String[] PROJECTION = new String[] {
-		    ContactsContract.Contacts.PHOTO_ID,
 				ContactsContract.Contacts.DISPLAY_NAME,
 				ContactsContract.CommonDataKinds.Phone.NUMBER };
 
-		cr = getActivity().getBaseContext().getContentResolver();
-		Cursor cursor = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, null, null, null);
+		ContentResolver cr = getActivity().getBaseContext().getContentResolver();
+		Cursor cursor = cr.query(
+		    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, null,
+		    null, null);
 		if (cursor != null) {
 		    try {
-				// final int photoIndex = cursor
-				// .getColumnIndex(ContactsContract.Contacts.PHOTO_ID);
 				final int displayNameIndex = cursor
 				    .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
 				final int phoneIndex = cursor
 				    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
 
 				String name = "", phoneNumber = "";
-				// Long id;
 				while (cursor.moveToNext()) {
-					// id = cursor.getLong(photoIndex);
 					name = cursor.getString(displayNameIndex);
 					phoneNumber = cursor.getString(phoneIndex);
 
 					// If contact has multiple numbers, make an entry for each
 					int j = 2;
 					while (contactMap.get(name) != null) {
+						// Differentiate between each entry's name
 						name = name + " #" + Integer.toString(j);
 					}
 
 					// Update contact HashMap
 					Contact c = new Contact();
-					// c.setId(id);
 					c.setName(name);
 					c.setNumber(phoneNumber);
 					contactMap.put(name, c);
@@ -206,11 +200,11 @@ public class FriendSelectorFragment extends Fragment implements
 		String name = arg0.getItemAtPosition(arg2).toString();
 		Contact c = contactMap.get(name);
 
-		// If name exist in HashMap
-		if (contactMap.get(name) != null) {
-			setCreepView(name, c.getId());
-			mCreep.setName(name);
-			mCreep.setNumber(c.getNumber());
+		// If name exists in HashMap, set as creep data
+		if (c != null) {
+			setCreepView(name);
+			creep.setName(name);
+			creep.setNumber(c.getNumber());
 		}
 
 		InputMethodManager imm = (InputMethodManager) getActivity()
@@ -219,10 +213,9 @@ public class FriendSelectorFragment extends Fragment implements
 		    .getWindowToken(), 0);
 	}
 
-	/* Changes friend name text from default to reflect contact choice */
-	private void setCreepView(String name, Long id) {
+	// Changes victim name text from default to reflect contact choice
+	private void setCreepView(String name) {
 		nameTextView.setText(name);
-		// Figure out how to get contact photo, set as imageview
 	}
 
 	private long parseFollowTime(View v) {
@@ -237,14 +230,14 @@ public class FriendSelectorFragment extends Fragment implements
 		return time;
 	}
 
-	/* Builds the Activity Bar Menu */
+	// Builds the Activity Bar Menu
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.fragment_main_options, menu);
 	}
 
-	/* Deals with Activity Bar and Menu item selections */
+	// Deals with Activity Bar and Menu item selections
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

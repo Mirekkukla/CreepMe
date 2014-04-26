@@ -6,132 +6,131 @@ import java.util.UUID;
 import android.graphics.Bitmap;
 
 public class Creep {
-	private String mName;
-	private String mNumber;
-	private Bitmap mProfilePic;
-	private long mFollowTime;
-	private long mTimeRemaining;
-	private final UUID mId;
-	private long mTimeMade;
-	private long mTimeStarted;
-	private Boolean mIsByYou;
-	private Boolean mIsChecked;
-	private Boolean mIsStarted;
-	private Boolean mIsComplete;
-	private Double mLatitude;
-	private Double mLongitude;
+	private String name;
+	private String number;
+	private Bitmap profilePic;
+	private long followTime;
+	private long timeRemaining;
+	private final UUID id;
+	private long timeMade;
+	private long timeStarted;
+	private Boolean isByYou;
+	private Boolean isChecked;
+	private Boolean isStarted;
+	private Boolean isComplete;
+	private Double latitude;
+	private Double longitude;
 
+	// Initializes UUID when creating a new Creep
 	public Creep() {
-		mId = UUID.randomUUID();
+		this.id = UUID.randomUUID();
 	}
 
 	public Boolean isByYou() {
-		return mIsByYou;
+		return isByYou;
 	}
 
-	public void setByYou(Boolean bool) {
-		mIsByYou = bool;
+	public void setIsByYou(Boolean bool) {
+		this.isByYou = bool;
 	}
 
 	public String getName() {
-		return mName;
+		return name;
 	}
 
 	public void setName(String name) {
-		mName = name;
+		this.name = name;
 	}
 
 	public String getNumber() {
-		return mNumber;
+		return number;
 	}
 
 	public void setNumber(String number) {
-		mNumber = number;
+		this.number = number;
 	}
 
 	public long getFollowTime() {
-		return mFollowTime;
+		return followTime;
 	}
 
 	public void setFollowTime(long time) {
-		mFollowTime = time;
+		this.followTime = time;
 	}
 
-	/**
-	 * Returns follow time remaining in milliseconds
-	 */
+	// Returns time in ms
 	public long getTimeRemaining() {
 		Date now = new Date();
-		mTimeRemaining = now.getTime() - mTimeStarted;
-		return mTimeRemaining;
+		timeRemaining = now.getTime() - timeStarted;
+		return timeRemaining;
 	}
 
 	public Bitmap getProfilePic() {
-		return mProfilePic;
+		return profilePic;
 	}
 
 	public void setProfilePic(Bitmap pic) {
-		mProfilePic = pic;
+		this.profilePic = pic;
 	}
 
 	public UUID getId() {
-		return mId;
+		return id;
 	}
 
 	public void setTimeMade(long time) {
-		mTimeMade = time;
+		this.timeMade = time;
 	}
 
 	public long getTimeMade() {
-		return mTimeMade;
+		return timeMade;
 	}
 
 	public long getTimeStarted() {
-		return mTimeStarted;
+		return timeStarted;
 	}
 
 	public void setTimeStarted(long time) {
-		mTimeStarted = time;
+		this.timeStarted = time;
 	}
 
 	public void setIsChecked(Boolean bool) {
-		mIsChecked = bool;
+		this.isChecked = bool;
 	}
 
 	public Boolean getIsChecked() {
-		return mIsChecked;
+		return isChecked;
 	}
 
 	public void setIsStarted(Boolean bool) {
-		mIsStarted = bool;
+		this.isStarted = bool;
 	}
 
 	public Boolean getIsStarted() {
-		return mIsStarted;
+		return isStarted;
 	}
 
 	public void setIsComplete(Boolean bool) {
-		mIsComplete = bool;
+		this.isComplete = bool;
 	}
 
 	public Boolean getIsComplete() {
-		return mIsComplete;
+		return isComplete;
 	}
 
 	public void setLatitude(Double lat) {
-		mLatitude = lat;
+		this.latitude = lat;
 	}
 
 	public Double getLatitude() {
-		return mLatitude;
+		return latitude;
 	}
 
 	public void setLongitude(Double lng) {
-		mLongitude = lng;
+		this.longitude = lng;
 	}
 
 	public Double getLongitude() {
-		return mLongitude;
+		return longitude;
 	}
 
 }

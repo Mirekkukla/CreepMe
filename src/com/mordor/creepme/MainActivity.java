@@ -20,7 +20,6 @@ public class MainActivity extends Activity {
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
 
-	/* Builds view for Main */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,7 +27,7 @@ public class MainActivity extends Activity {
 
 		sLab = CreepLab.get(this);
 
-		// Get device's phone number
+		// Get user's phone number
 		TelephonyManager tMgr = (TelephonyManager) this
 		    .getSystemService(Context.TELEPHONY_SERVICE);
 		sPhoneNumber = tMgr.getLine1Number();
@@ -51,7 +50,7 @@ public class MainActivity extends Activity {
 
 	}
 
-	/* Defines and activates intent that opens FriendSelector activity */
+	// Defines and activates intent that opens FriendSelector activity
 	public void newFriendSelector(View v) {
 		Intent i = new Intent(this, FriendSelectorActivity.class);
 		startActivity(i);
@@ -60,11 +59,12 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		// Update lists
+		// Update lists on activity resume
 		adp1.notifyDataSetChanged();
 		adp2.notifyDataSetChanged();
 	}
 
+	// Activity taken on Cancel All Selections Button click
 	public void cancelSelections(View v) {
 		try {
 			// If nothing gets removed, nothing was selected
@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
 		adp2.notifyDataSetChanged();
 	}
 
-	/* Builds the Activity Bar Menu */
+	// Builds the Activity Bar Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = new MenuInflater(this);
@@ -87,6 +87,7 @@ public class MainActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	// Starts a timer to update timers every second
 	public void implementListViewTimer() {
 		// Timer counts down every second, by 1000 ms intervals
 		new CountDownTimer(1000, 1000) {
@@ -100,6 +101,7 @@ public class MainActivity extends Activity {
 				sLab.checkForCompletions();
 				adp1.notifyDataSetChanged();
 				adp2.notifyDataSetChanged();
+				// Restarts every second
 				implementListViewTimer();
 			}
 

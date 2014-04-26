@@ -32,6 +32,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 
+		final Creep current = creepData.get(position);
 		CreepHolder holder = null;
 
 		if (convertView == null) {
@@ -50,7 +51,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			holder.name = (TextView) convertView
 					.findViewById(R.id.friend_nameText);
 			holder.timeLeft = (TextView) convertView
-					.findViewById(R.id.follow_time);
+			    .findViewById(R.id.follow_timeText);
 			holder.gps = (ImageView) convertView
 					.findViewById(R.id.gps_enabledImage);
 
@@ -64,17 +65,17 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		convertView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (creepData.get(position).isByYou()) {
+				if (current.isByYou()) {
 					Intent i = new Intent(context, CreepMapActivity.class);
-					i.putExtra("lat", creepData.get(position).getLatitude());
-					i.putExtra("lng", creepData.get(position).getLongitude());
-					i.putExtra("name", creepData.get(position).getName());
+					i.putExtra("lat", current.getLatitude());
+					i.putExtra("lng", current.getLongitude());
+					i.putExtra("name", current.getName());
 					context.startActivity(i);
 				} else {
 					Intent i = new Intent(context, CreepMapActivity.class);
-					i.putExtra("lat", creepData.get(position).getLatitude());
-					i.putExtra("lng", creepData.get(position).getLongitude());
-					i.putExtra("name", creepData.get(position).getName());
+					i.putExtra("lat", current.getLatitude());
+					i.putExtra("lng", current.getLongitude());
+					i.putExtra("name", current.getName());
 					context.startActivity(i);
 				}
 
@@ -83,29 +84,30 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		});
 
 		// Handle CheckBox actions, states
-		holder.checkBox.setChecked(creepData.get(position).getIsChecked());
+		holder.checkBox.setChecked(current.getIsChecked());
 		holder.checkBox.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				creepData.get(position).setIsChecked(!creepData.get(position).getIsChecked());
+				current.setIsChecked(!current.getIsChecked());
 			}
 		});
 
-		// holder.profilePic.setImageDrawable(creepData.get(position).getProfilePic());
-		holder.name.setText(creepData.get(position).getName());
+		// holder.profilePic.setImageDrawable(current.getProfilePic());
+		holder.name.setText(current.getName());
 
 		// Update creep time left
 		tv = holder.timeLeft;
 		Date currT = new Date();
-		if (!creepData.get(position).getIsStarted()) {
-			creepData.get(position).setIsStarted(true);
-			creepData.get(position).setTimeStarted(currT.getTime());
+		if (!current.getIsStarted()) {
+			current.setIsStarted(true);
+			current.setTimeStarted(currT.getTime());
 		}
 		if (tv != null) {
-			long millisToFinish = creepData.get(position).getFollowTime()
-					- (currT.getTime() - creepData.get(position)
+			long millisToFinish = current.getFollowTime()
+			    - (currT.getTime() - current
 							.getTimeStarted());
 			if (millisToFinish > 0) {
+				// Convert millisToFinish to readable string
 				int sec = (int) (millisToFinish / 1000) % 60;
 				int min = (int) ((millisToFinish / (1000 * 60)) % 60);
 				int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
@@ -120,12 +122,13 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 				String text = (hours + ":" + minutes + ":" + seconds);
 				tv.setText(text);
 			} else {
-				creepData.get(position).setIsComplete(true);
+				// Creep is complete
+				current.setIsComplete(true);
 				tv.setText("--:--:--");
 			}
 		}
 
-		// holder.gps.setImageDrawable(creepData.get(position).get)
+		// holder.gps.setImageDrawable(current.get)
 
 		return convertView;
 	}
