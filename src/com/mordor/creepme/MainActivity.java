@@ -1,9 +1,11 @@
 package com.mordor.creepme;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +16,7 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	private static final String TAG = "com.mordor.creepme.MainActivity";
 	public static CreepLab sLab;
+	public static String sPhoneNumber;
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
 
@@ -24,6 +27,11 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		sLab = CreepLab.get(this);
+
+		// Get device's phone number
+		TelephonyManager tMgr = (TelephonyManager) this
+		    .getSystemService(Context.TELEPHONY_SERVICE);
+		sPhoneNumber = tMgr.getLine1Number();
 
 		// Define ListViews locally, linked to layout
 		ListView lv1 = (ListView) findViewById(R.id.who_you_creepingList);
