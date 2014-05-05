@@ -27,7 +27,7 @@ public class Creep {
 	}
 
 	public Boolean isByYou() {
-		return isByYou;
+		return this.isByYou;
 	}
 
 	public void setIsByYou(Boolean bool) {
@@ -35,7 +35,7 @@ public class Creep {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -43,7 +43,7 @@ public class Creep {
 	}
 
 	public String getNumber() {
-		return number;
+		return this.number;
 	}
 
 	public void setNumber(String number) {
@@ -51,22 +51,22 @@ public class Creep {
 	}
 
 	public long getFollowTime() {
-		return followTime;
+		return this.followTime;
 	}
 
 	public void setFollowTime(long time) {
 		this.followTime = time;
 	}
 
-	// Returns time in ms
+	// Returns time in milliseconds
 	public long getTimeRemaining() {
 		Date now = new Date();
-		timeRemaining = now.getTime() - timeStarted;
-		return timeRemaining;
+		this.timeRemaining = now.getTime() - this.timeStarted;
+		return this.timeRemaining;
 	}
 
 	public Bitmap getProfilePic() {
-		return profilePic;
+		return this.profilePic;
 	}
 
 	public void setProfilePic(Bitmap pic) {
@@ -74,7 +74,7 @@ public class Creep {
 	}
 
 	public UUID getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setTimeMade(long time) {
@@ -82,11 +82,11 @@ public class Creep {
 	}
 
 	public long getTimeMade() {
-		return timeMade;
+		return this.timeMade;
 	}
 
 	public long getTimeStarted() {
-		return timeStarted;
+		return this.timeStarted;
 	}
 
 	public void setTimeStarted(long time) {
@@ -98,7 +98,7 @@ public class Creep {
 	}
 
 	public Boolean getIsChecked() {
-		return isChecked;
+		return this.isChecked;
 	}
 
 	public void setIsStarted(Boolean bool) {
@@ -106,7 +106,7 @@ public class Creep {
 	}
 
 	public Boolean getIsStarted() {
-		return isStarted;
+		return this.isStarted;
 	}
 
 	public void setIsComplete(Boolean bool) {
@@ -114,7 +114,7 @@ public class Creep {
 	}
 
 	public Boolean getIsComplete() {
-		return isComplete;
+		return this.isComplete;
 	}
 
 	public void setLatitude(Double lat) {
@@ -122,7 +122,7 @@ public class Creep {
 	}
 
 	public Double getLatitude() {
-		return latitude;
+		return this.latitude;
 	}
 
 	public void setLongitude(Double lng) {
@@ -130,7 +130,7 @@ public class Creep {
 	}
 
 	public Double getLongitude() {
-		return longitude;
+		return this.longitude;
 	}
 
 }

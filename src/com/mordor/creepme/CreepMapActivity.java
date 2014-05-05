@@ -35,17 +35,16 @@ public class CreepMapActivity extends Activity {
 		if (extras != null) {
 			Double mLatVictim = extras.getDouble("lat");
 			Double mLngVictim = extras.getDouble("lng");
-			name = extras.getString("name");
+			this.name = extras.getString("name");
 
 			// Set header text
 			TextView nameTextView = (TextView) findViewById(R.id.map_infoText);
-			nameTextView.setText(name);
+			nameTextView.setText(this.name);
 
 			// Set victim's location as destination point for Directions
 			LatLng victim = new LatLng(mLatVictim, mLngVictim);
-			dirPoints = ("http://maps.google.com/maps?f=&daddr="
-					+ Double.toString(mLatVictim) + ", " + Double
-					.toString(mLngVictim));
+			this.dirPoints = ("http://maps.google.com/maps?f=&daddr="
+			    + Double.toString(mLatVictim) + ", " + Double.toString(mLngVictim));
 
 			// Get a handle to the Map Fragment
 			final GoogleMap map = ((MapFragment) getFragmentManager()
@@ -53,7 +52,7 @@ public class CreepMapActivity extends Activity {
 			map.setMyLocationEnabled(true);
 			LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 			String provider = LocationManager.GPS_PROVIDER;
-	        Location location = locationManager.getLastKnownLocation(provider);
+			Location location = locationManager.getLastKnownLocation(provider);
 
 			// Zoom in on an area including both user and victim locations
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(victim, 13));
@@ -63,36 +62,37 @@ public class CreepMapActivity extends Activity {
 				LatLng user = new LatLng(mLatUser, mLngUser);
 
 				LatLngBounds.Builder builder = new LatLngBounds.Builder();
-				final LatLngBounds bounds = builder.include(victim)
-						.include(user)
-						.build();
+				final LatLngBounds bounds = builder.include(victim).include(user)
+				    .build();
 
 				try {
-					map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,
-							75));
+					map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 75));
 				} catch (Exception e) {
 					// layout not yet initialized
 					final View mapView = getFragmentManager().findFragmentById(
 					    R.id.creep_mapFragment).getView();
-			        if (mapView.getViewTreeObserver().isAlive()) {
-			            mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+					if (mapView.getViewTreeObserver().isAlive()) {
+						mapView.getViewTreeObserver().addOnGlobalLayoutListener(
+						    new OnGlobalLayoutListener() {
 
-							@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-							@Override
-			                public void onGlobalLayout() {
-			                	mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-								map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 75));
-			                }
-			            });
-			        }
+							    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+							    @Override
+							    public void onGlobalLayout() {
+								    mapView.getViewTreeObserver().removeOnGlobalLayoutListener(
+								        this);
+								    map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds,
+								        75));
+							    }
+						    });
+					}
 				}
 
 				// Marker shows victim's name when you click on it
 				map.addMarker(new MarkerOptions().title("Victim")
-						.snippet("< who yer creepin' >").position(victim));
+				    .snippet("< who yer creepin' >").position(victim));
 			} else {
 				map.moveCamera(CameraUpdateFactory.newLatLngZoom(victim, 13));
-				map.addMarker(new MarkerOptions().title("Victim").snippet(name)
+				map.addMarker(new MarkerOptions().title("Victim").snippet(this.name)
 				    .position(victim));
 			}
 		}
@@ -117,9 +117,9 @@ public class CreepMapActivity extends Activity {
 
 	// Action taken on Get Directions button click
 	public void getDirections(View v) {
-		if (dirPoints != "") {
+		if (this.dirPoints != "") {
 			Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-			    Uri.parse(dirPoints));
+			    Uri.parse(this.dirPoints));
 			startActivity(intent);
 		}
 

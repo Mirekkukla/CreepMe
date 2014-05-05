@@ -28,23 +28,23 @@ public class MainActivity extends Activity {
 		sLab = CreepLab.get(this);
 
 		// Get user's phone number
-		TelephonyManager tMgr = (TelephonyManager) this
+		TelephonyManager telManager = (TelephonyManager) this
 		    .getSystemService(Context.TELEPHONY_SERVICE);
-		sPhoneNumber = tMgr.getLine1Number();
+		sPhoneNumber = telManager.getLine1Number();
 
 		// Define ListViews locally, linked to layout
 		ListView lv1 = (ListView) findViewById(R.id.who_you_creepingList);
 		ListView lv2 = (ListView) findViewById(R.id.who_creeping_youList);
 
 		// Assign adapters
-		adp1 = new CreepListAdapter(this, R.layout.creep_list_element,
-				sLab.getCreeps(true));
-		adp2 = new CreepListAdapter(this, R.layout.creep_list_element,
-				sLab.getCreeps(false));
+		this.adp1 = new CreepListAdapter(this, R.layout.creep_list_element,
+		    sLab.getCreeps(true));
+		this.adp2 = new CreepListAdapter(this, R.layout.creep_list_element,
+		    sLab.getCreeps(false));
 
 		// Set custom array adapter to display list items in each ListView
-		lv1.setAdapter(adp1);
-		lv2.setAdapter(adp2);
+		lv1.setAdapter(this.adp1);
+		lv2.setAdapter(this.adp2);
 
 		implementListViewTimer();
 
@@ -60,8 +60,8 @@ public class MainActivity extends Activity {
 	public void onResume() {
 		super.onResume();
 		// Update lists on activity resume
-		adp1.notifyDataSetChanged();
-		adp2.notifyDataSetChanged();
+		this.adp1.notifyDataSetChanged();
+		this.adp2.notifyDataSetChanged();
 	}
 
 	// Activity taken on Cancel All Selections Button click
@@ -69,14 +69,13 @@ public class MainActivity extends Activity {
 		try {
 			// If nothing gets removed, nothing was selected
 			if (!sLab.removeSelections()) {
-				Toast.makeText(this, "Nothing selected", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "Nothing selected", Toast.LENGTH_SHORT).show();
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "Exception error at cancelSelections()");
 		}
-		adp1.notifyDataSetChanged();
-		adp2.notifyDataSetChanged();
+		this.adp1.notifyDataSetChanged();
+		this.adp2.notifyDataSetChanged();
 	}
 
 	// Builds the Activity Bar Menu

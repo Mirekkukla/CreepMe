@@ -13,14 +13,14 @@ public class CreepLab {
 	private static CreepLab sCreepLab;
 
 	private CreepLab(Context appContext) {
-		creepsByYou = new ArrayList<Creep>();
-		creepsOnYou = new ArrayList<Creep>();
-		// Temp list population for testing
+		this.creepsByYou = new ArrayList<Creep>();
+		this.creepsOnYou = new ArrayList<Creep>();
+		// Temporary list population for testing
 		for (int i = 0; i < 7; i++) {
-				Date now = new Date();
-				Creep c = new Creep();
+			Date now = new Date();
+			Creep c = new Creep();
 			c.setTimeMade(now.getTime());
-				c.setName("Your Friend #" + (i + 1));
+			c.setName("Your Friend #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setTimeStarted(now.getTime());
 			c.setLatitude(43.479786);
@@ -29,13 +29,13 @@ public class CreepLab {
 			c.setIsChecked(false);
 			c.setIsStarted(true);
 			c.setIsComplete(false);
-			creepsByYou.add(c);
-			}
+			this.creepsByYou.add(c);
+		}
 		for (int i = 0; i < 2; i++) {
-				Date now = new Date();
-				Creep c = new Creep();
+			Date now = new Date();
+			Creep c = new Creep();
 			c.setTimeMade(now.getTime());
-				c.setName("Hot Chick #" + (i + 1));
+			c.setName("Hot Chick #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setTimeStarted(now.getTime());
 			c.setLatitude(43.59);
@@ -44,8 +44,8 @@ public class CreepLab {
 			c.setIsChecked(false);
 			c.setIsStarted(true);
 			c.setIsComplete(false);
-			creepsOnYou.add(c);
-			}
+			this.creepsOnYou.add(c);
+		}
 	}
 
 	public static CreepLab get(Context c) {
@@ -57,21 +57,21 @@ public class CreepLab {
 
 	public ArrayList<Creep> getCreeps(Boolean isByYou) {
 		if (isByYou) {
-			return creepsByYou;
+			return this.creepsByYou;
 		} else {
-			return creepsOnYou;
+			return this.creepsOnYou;
 		}
 	}
 
 	public Creep getCreep(UUID id, Boolean isByYou) {
 		if (isByYou) {
-			for (Creep c : creepsByYou) {
+			for (Creep c : this.creepsByYou) {
 				if (c.getId().equals(id)) {
 					return c;
 				}
 			}
 		} else {
-			for (Creep c : creepsOnYou) {
+			for (Creep c : this.creepsOnYou) {
 				if (c.getId().equals(id)) {
 					return c;
 				}
@@ -82,18 +82,18 @@ public class CreepLab {
 
 	public void addCreep(Creep c) {
 		if (c.isByYou()) {
-			creepsByYou.add(c);
+			this.creepsByYou.add(c);
 		} else if (!c.isByYou()) {
-			creepsOnYou.add(c);
+			this.creepsOnYou.add(c);
 		}
 	}
 
 	// Removes the passed creep from it's ArrayList
 	public void removeCreep(Creep c) {
-		if(c.isByYou()) {
-			creepsByYou.remove(creepsByYou.indexOf(c));
+		if (c.isByYou()) {
+			this.creepsByYou.remove(this.creepsByYou.indexOf(c));
 		} else if (!c.isByYou()) {
-			creepsOnYou.remove(creepsOnYou.indexOf(c));
+			this.creepsOnYou.remove(this.creepsOnYou.indexOf(c));
 		}
 	}
 
@@ -101,43 +101,43 @@ public class CreepLab {
 	public Boolean removeSelections() {
 		Boolean removed = false;
 		// Remove all checked creeps
-		for (int i = 0; i < creepsOnYou.size(); i++) {
-			if (creepsOnYou.get(i).getIsChecked()) {
-				creepsOnYou.remove(i);
+		for (int i = 0; i < this.creepsOnYou.size(); i++) {
+			if (this.creepsOnYou.get(i).getIsChecked()) {
+				this.creepsOnYou.remove(i);
 				removed = true;
 				i--; // Because an element was just removed
 			}
 		}
-		for (int i = 0; i < creepsByYou.size(); i++) {
-			if (creepsByYou.get(i).getIsChecked()) {
-				creepsByYou.remove(i);
+		for (int i = 0; i < this.creepsByYou.size(); i++) {
+			if (this.creepsByYou.get(i).getIsChecked()) {
+				this.creepsByYou.remove(i);
 				removed = true;
 				i--; // Because an element was just removed
 			}
 		}
 
 		// Set all remaining creeps to unchecked
-		for (int i = 0; i < creepsOnYou.size(); i++) {
-			creepsOnYou.get(i).setIsChecked(false);
+		for (int i = 0; i < this.creepsOnYou.size(); i++) {
+			this.creepsOnYou.get(i).setIsChecked(false);
 		}
-		for (int i = 0; i < creepsByYou.size(); i++) {
-			creepsByYou.get(i).setIsChecked(false);
+		for (int i = 0; i < this.creepsByYou.size(); i++) {
+			this.creepsByYou.get(i).setIsChecked(false);
 		}
 		return removed;
 	}
 
 	// Checks for and removes all completed creeps
 	public void checkForCompletions() {
-		for (int i = 0; i < creepsOnYou.size(); i++) {
-			if (creepsOnYou.get(i).getIsComplete()) {
-				creepsOnYou.remove(i);
+		for (int i = 0; i < this.creepsOnYou.size(); i++) {
+			if (this.creepsOnYou.get(i).getIsComplete()) {
+				this.creepsOnYou.remove(i);
 				if (i != 0)
 					i--; // Because an element was removed
 			}
 		}
-		for (int i = 0; i < creepsByYou.size(); i++) {
-			if (creepsByYou.get(i).getIsComplete()) {
-				creepsByYou.remove(i);
+		for (int i = 0; i < this.creepsByYou.size(); i++) {
+			if (this.creepsByYou.get(i).getIsComplete()) {
+				this.creepsByYou.remove(i);
 				if (i != 0)
 					i--; // Because an element was removed
 			}

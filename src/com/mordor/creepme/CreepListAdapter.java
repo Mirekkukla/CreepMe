@@ -22,7 +22,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private TextView tv;
 
 	public CreepListAdapter(Context context, int layoutResourceId,
-			ArrayList<Creep> creepData) {
+	    ArrayList<Creep> creepData) {
 		super(context, layoutResourceId, creepData);
 		this.layoutResourceId = layoutResourceId;
 		this.context = context;
@@ -32,11 +32,11 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 
-		final Creep current = creepData.get(position);
+		final Creep current = this.creepData.get(position);
 		CreepHolder holder = null;
 
 		if (convertView == null) {
-			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+			LayoutInflater inflater = ((Activity) this.context).getLayoutInflater();
 			convertView = inflater.inflate(layoutResourceId, parent, false);
 
 			holder = new CreepHolder();
@@ -44,16 +44,13 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			convertView.setClickable(true);
 			convertView.setFocusable(true);
 
-			holder.checkBox = (CheckBox) convertView
-					.findViewById(R.id.cancelBox);
+			holder.checkBox = (CheckBox) convertView.findViewById(R.id.cancelBox);
 			holder.profilePic = (ImageView) convertView
-					.findViewById(R.id.profile_picImage);
-			holder.name = (TextView) convertView
-					.findViewById(R.id.friend_nameText);
+			    .findViewById(R.id.profile_picImage);
+			holder.name = (TextView) convertView.findViewById(R.id.friend_nameText);
 			holder.timeLeft = (TextView) convertView
 			    .findViewById(R.id.follow_timeText);
-			holder.gps = (ImageView) convertView
-					.findViewById(R.id.gps_enabledImage);
+			holder.gps = (ImageView) convertView.findViewById(R.id.gps_enabledImage);
 
 			convertView.setTag(holder);
 
@@ -96,16 +93,15 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		holder.name.setText(current.getName());
 
 		// Update creep time left
-		tv = holder.timeLeft;
+		this.tv = holder.timeLeft;
 		Date currT = new Date();
 		if (!current.getIsStarted()) {
 			current.setIsStarted(true);
 			current.setTimeStarted(currT.getTime());
 		}
-		if (tv != null) {
+		if (this.tv != null) {
 			long millisToFinish = current.getFollowTime()
-			    - (currT.getTime() - current
-							.getTimeStarted());
+			    - (currT.getTime() - current.getTimeStarted());
 			if (millisToFinish > 0) {
 				// Convert millisToFinish to readable string
 				int sec = (int) (millisToFinish / 1000) % 60;
@@ -120,11 +116,11 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 					minutes = "0" + minutes;
 
 				String text = (hours + ":" + minutes + ":" + seconds);
-				tv.setText(text);
+				this.tv.setText(text);
 			} else {
 				// Creep is complete
 				current.setIsComplete(true);
-				tv.setText("--:--:--");
+				this.tv.setText("--:--:--");
 			}
 		}
 

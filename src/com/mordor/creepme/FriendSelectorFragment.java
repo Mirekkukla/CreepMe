@@ -33,7 +33,7 @@ public class FriendSelectorFragment extends Fragment implements
     OnItemClickListener, OnItemSelectedListener {
 
 	// Initialize AutoComplete variables
-	AutoCompleteTextView textView = null;
+	private AutoCompleteTextView textView = null;
 	private ArrayAdapter<String> adapter;
 
 	// Store contacts values in HashMap
@@ -52,13 +52,12 @@ public class FriendSelectorFragment extends Fragment implements
 	// Builds main fragment view for FriendSelector
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
-			Bundle savedInstanceState) {
+	    Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setHasOptionsMenu(true);
 
 		// Inflates fragment layout into View
-		View v = inflater.inflate(R.layout.fragment_friend_selector, parent,
-				false);
+		View v = inflater.inflate(R.layout.fragment_friend_selector, parent, false);
 
 		// Display home as up
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,19 +65,20 @@ public class FriendSelectorFragment extends Fragment implements
 
 		// Initialize AutoCompleteTextView values
 
-		textView = (AutoCompleteTextView) v.findViewById(R.id.to_numberAutoText);
+		this.textView = (AutoCompleteTextView) v
+		    .findViewById(R.id.to_numberAutoText);
 		nameTextView = (TextView) v.findViewById(R.id.friend_nameText);
 
 		// Create adapter (will change to custom, to display phone # as well)
-		adapter = new ArrayAdapter<String>(getActivity(),
+		this.adapter = new ArrayAdapter<String>(getActivity(),
 		    android.R.layout.two_line_list_item, android.R.id.text1,
 		    new ArrayList<String>());
-		textView.setThreshold(1);
+		this.textView.setThreshold(1);
 
 		// Set adapter to AutoCompleteTextView
-		textView.setAdapter(adapter);
-		textView.setOnItemSelectedListener(this);
-		textView.setOnItemClickListener(this);
+		this.textView.setAdapter(this.adapter);
+		this.textView.setOnItemSelectedListener(this);
+		this.textView.setOnItemClickListener(this);
 
 		// Read contact data and add data to ArrayAdapter
 		// used by AutoCompleteTextView
@@ -111,9 +111,8 @@ public class FriendSelectorFragment extends Fragment implements
 				creep.setIsComplete(false);
 
 				if (creep.getName() == null) {
-					Toast.makeText(getActivity(),
-							"Please choose creep victim first!",
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(getActivity(), "Please choose creep victim first!",
+					    Toast.LENGTH_SHORT).show();
 					return;
 				}
 
@@ -122,12 +121,12 @@ public class FriendSelectorFragment extends Fragment implements
 				Intent i = new Intent(getActivity(), MainActivity.class);
 				getActivity().startActivity(i);
 				/**
-				 * query database - if phone number has app, send request,
-				 * acknowledge request sent, and return to main.
+				 * query database - if phone number has app, send request, acknowledge
+				 * request sent, and return to main.
 				 *
-				 * if phone number does not have app, ask if they want to send a
-				 * text inviting them. If yes, send text, store pending request
-				 * for set amount of time, and
+				 * if phone number does not have app, ask if they want to send a text
+				 * inviting them. If yes, send text, store pending request for set
+				 * amount of time, and
 				 */
 			}
 		});
@@ -138,15 +137,15 @@ public class FriendSelectorFragment extends Fragment implements
 	// Read phone contact name and phone number(s)
 	private void readContactData() {
 		final String[] PROJECTION = new String[] {
-				ContactsContract.Contacts.DISPLAY_NAME,
-				ContactsContract.CommonDataKinds.Phone.NUMBER };
+		    ContactsContract.Contacts.DISPLAY_NAME,
+		    ContactsContract.CommonDataKinds.Phone.NUMBER };
 
 		ContentResolver cr = getActivity().getBaseContext().getContentResolver();
 		Cursor cursor = cr.query(
 		    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, PROJECTION, null,
 		    null, null);
 		if (cursor != null) {
-		    try {
+			try {
 				final int displayNameIndex = cursor
 				    .getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
 				final int phoneIndex = cursor
@@ -171,33 +170,34 @@ public class FriendSelectorFragment extends Fragment implements
 					contactMap.put(name, c);
 
 					// Add contacts name to adapter
-					adapter.add(name);
+					this.adapter.add(name);
 				}
-		    } finally {
-		        cursor.close();
-		    }
+			} finally {
+				cursor.close();
+			}
 		}
 	}
 
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
-			long arg3) {
-		// Blank
+	    long arg3) {
+		// Nothing
 	}
 
 	@Override
-	public void onNothingSelected(AdapterView<?> arg0) {
+	public void onNothingSelected(AdapterView<?> adapterView) {
 		InputMethodManager imm = (InputMethodManager) getActivity()
-				.getSystemService(getActivity().INPUT_METHOD_SERVICE);
+		    .getSystemService(getActivity().INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(getActivity().getCurrentFocus()
-				.getWindowToken(), 0);
+		    .getWindowToken(), 0);
 
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	public void onItemClick(AdapterView<?> adapterView, View view, int pos,
+	    long arg3) {
 		// Get Array index value for selected name
-		String name = arg0.getItemAtPosition(arg2).toString();
+		String name = adapterView.getItemAtPosition(pos).toString();
 		Contact c = contactMap.get(name);
 
 		// If name exists in HashMap, set as creep data

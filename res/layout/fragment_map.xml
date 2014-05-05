@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical" >
-    
-	<TextView
-	    android:id="@+id/map_infoText"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	  	android:text="@string/default_friend_name"
-	   	android:gravity="center_horizontal"
-	    android:background="#d3d3d3" />
-	
-	<fragment
-    	class="com.google.android.gms.maps.MapFragment"
-    	android:id="@+id/creep_mapFragment"
-    	android:layout_width="match_parent"
-    	android:layout_height="0dp"
-    	android:layout_weight="1" />
-	
-	<Button 
-	    android:id="@+id/directionsButton"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:text="@string/directions"
-	    android:onClick="getDirections" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/map_infoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#d3d3d3"
+        android:gravity="center_horizontal"
+        android:text="@string/default_friend_name" />
+
+    <fragment
+        android:id="@+id/creep_mapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        class="com.google.android.gms.maps.MapFragment" />
+
+    <Button
+        android:id="@+id/directionsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="getDirections"
+        android:text="@string/directions" />
 
 </LinearLayout>

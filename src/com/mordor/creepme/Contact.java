@@ -9,7 +9,7 @@ public class Contact {
 	private String id;
 
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(String id) {
@@ -17,7 +17,7 @@ public class Contact {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -25,7 +25,7 @@ public class Contact {
 	}
 
 	public String getNumber() {
-		return number;
+		return this.number;
 	}
 
 	public void setNumber(String number) {
@@ -33,7 +33,7 @@ public class Contact {
 	}
 
 	public Bitmap getPic() {
-		return pic;
+		return this.pic;
 	}
 
 	public void setPic(Bitmap pic) {

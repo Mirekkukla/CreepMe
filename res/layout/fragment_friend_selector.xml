@@ -1,26 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
-	
-	<TextView
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="20dp"
-	    android:text="@string/selector_title"
-	    android:textSize="20sp"
-	    style="?android:listSeparatorTextViewStyle" />
-    
+
+    <TextView
+        style="?android:listSeparatorTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/selector_title"
+        android:textSize="20sp" />
+
     <AutoCompleteTextView
-            android:id="@+id/to_numberAutoText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginTop="10dp"
-            android:width="250dip"
-            android:hint="@string/to_number_hint"/>
+        android:id="@+id/to_numberAutoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="10dp"
+        android:hint="@string/to_number_hint"
+        android:width="250dip" />
 
     <ImageView
         android:id="@+id/selector_profileImage"
@@ -35,75 +36,73 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textSize="20sp"
-        android:text="@string/default_friend_name" />
+        android:text="@string/default_friend_name"
+        android:textSize="20sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="25dp" >
-        
-        <TextView 
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="25dp" >
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:textSize="18sp"
-            android:text="@string/creep_time" />
-        
+            android:text="@string/creep_time"
+            android:textSize="18sp" />
+
         <EditText
             android:id="@+id/hrsEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
             android:digits="0123456789"
             android:inputType="numberDecimal"
             android:maxLength="2"
-            android:textSize="20sp"
-            android:layout_marginLeft="2dp"
-            android:text="@string/default_hours" />
-        
+            android:text="@string/default_hours"
+            android:textSize="20sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_marginLeft="2dp"
-            android:text="@string/hr" />
-        
+            android:text="@string/hr"
+            android:textSize="20sp" />
+
         <EditText
             android:id="@+id/minsEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
             android:digits="0123456789"
             android:inputType="numberDecimal"
             android:maxLength="2"
-            android:textSize="20sp"
-            android:layout_marginLeft="2dp"
-            android:text="@string/default_minutes" />
-        
+            android:text="@string/default_minutes"
+            android:textSize="20sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
             android:layout_marginLeft="2dp"
-            android:text="@string/min" />
-        
+            android:text="@string/min"
+            android:textSize="20sp" />
     </LinearLayout>
 
-    
-        <Button
-            android:id="@+id/selector_finalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="50dp"
-            android:text="@string/selector_final" />
+    <Button
+        android:id="@+id/selector_finalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="@string/selector_final" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gps_enabled_warning"
-            android:textSize="14sp"
-            android:textStyle="italic" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/gps_enabled_warning"
+        android:textSize="14sp"
+        android:textStyle="italic" />
 
 </LinearLayout>
