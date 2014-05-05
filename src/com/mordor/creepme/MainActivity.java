@@ -1,9 +1,11 @@
 package com.mordor.creepme;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,16 +16,21 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
 	private static final String TAG = "com.mordor.creepme.MainActivity";
 	public static CreepLab sLab;
+	public static String sPhoneNumber;
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
 
-	/* Builds view for Main */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		sLab = CreepLab.get(this);
+
+		// Get user's phone number
+		TelephonyManager tMgr = (TelephonyManager) this
+		    .getSystemService(Context.TELEPHONY_SERVICE);
+		sPhoneNumber = tMgr.getLine1Number();
 
 		// Define ListViews locally, linked to layout
 		ListView lv1 = (ListView) findViewById(R.id.who_you_creepingList);
@@ -43,7 +50,7 @@ public class MainActivity extends Activity {
 
 	}
 
-	/* Defines and activates intent that opens FriendSelector activity */
+	// Defines and activates intent that opens FriendSelector activity
 	public void newFriendSelector(View v) {
 		Intent i = new Intent(this, FriendSelectorActivity.class);
 		startActivity(i);
@@ -52,11 +59,12 @@ public class MainActivity extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		// Update lists
+		// Update lists on activity resume
 		adp1.notifyDataSetChanged();
 		adp2.notifyDataSetChanged();
 	}
 
+	// Activity taken on Cancel All Selections Button click
 	public void cancelSelections(View v) {
 		try {
 			// If nothing gets removed, nothing was selected
@@ -71,7 +79,7 @@ public class MainActivity extends Activity {
 		adp2.notifyDataSetChanged();
 	}
 
-	/* Builds the Activity Bar Menu */
+	// Builds the Activity Bar Menu
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = new MenuInflater(this);
@@ -79,6 +87,7 @@ public class MainActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	// Starts a timer to update timers every second
 	public void implementListViewTimer() {
 		// Timer counts down every second, by 1000 ms intervals
 		new CountDownTimer(1000, 1000) {
@@ -92,6 +101,7 @@ public class MainActivity extends Activity {
 				sLab.checkForCompletions();
 				adp1.notifyDataSetChanged();
 				adp2.notifyDataSetChanged();
+				// Restarts every second
 				implementListViewTimer();
 			}
 

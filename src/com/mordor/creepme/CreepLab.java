@@ -7,15 +7,15 @@ import java.util.UUID;
 import android.content.Context;
 
 public class CreepLab {
-	private final ArrayList<Creep> mCreepsByYou;
-	private final ArrayList<Creep> mCreepsOnYou;
+	private final ArrayList<Creep> creepsByYou;
+	private final ArrayList<Creep> creepsOnYou;
 
 	private static CreepLab sCreepLab;
 
 	private CreepLab(Context appContext) {
-		mCreepsByYou = new ArrayList<Creep>();
-		mCreepsOnYou = new ArrayList<Creep>();
-		// Temp list population
+		creepsByYou = new ArrayList<Creep>();
+		creepsOnYou = new ArrayList<Creep>();
+		// Temp list population for testing
 		for (int i = 0; i < 7; i++) {
 				Date now = new Date();
 				Creep c = new Creep();
@@ -25,11 +25,11 @@ public class CreepLab {
 			c.setTimeStarted(now.getTime());
 			c.setLatitude(43.479786);
 			c.setLongitude(-110.762334);
-			c.setByYou(true);
+			c.setIsByYou(true);
 			c.setIsChecked(false);
 			c.setIsStarted(true);
 			c.setIsComplete(false);
-			mCreepsByYou.add(c);
+			creepsByYou.add(c);
 			}
 		for (int i = 0; i < 2; i++) {
 				Date now = new Date();
@@ -40,11 +40,11 @@ public class CreepLab {
 			c.setTimeStarted(now.getTime());
 			c.setLatitude(43.59);
 			c.setLongitude(-110.8);
-			c.setByYou(false);
+			c.setIsByYou(false);
 			c.setIsChecked(false);
 			c.setIsStarted(true);
 			c.setIsComplete(false);
-			mCreepsOnYou.add(c);
+			creepsOnYou.add(c);
 			}
 	}
 
@@ -55,23 +55,23 @@ public class CreepLab {
 		return sCreepLab;
 	}
 
-	public ArrayList<Creep> getCreeps(Boolean byYou) {
-		if (byYou) {
-			return mCreepsByYou;
+	public ArrayList<Creep> getCreeps(Boolean isByYou) {
+		if (isByYou) {
+			return creepsByYou;
 		} else {
-			return mCreepsOnYou;
+			return creepsOnYou;
 		}
 	}
 
-	public Creep getCreep(UUID id, Boolean byYou) {
-		if (byYou) {
-			for (Creep c : mCreepsByYou) {
+	public Creep getCreep(UUID id, Boolean isByYou) {
+		if (isByYou) {
+			for (Creep c : creepsByYou) {
 				if (c.getId().equals(id)) {
 					return c;
 				}
 			}
 		} else {
-			for (Creep c : mCreepsOnYou) {
+			for (Creep c : creepsOnYou) {
 				if (c.getId().equals(id)) {
 					return c;
 				}
@@ -82,66 +82,64 @@ public class CreepLab {
 
 	public void addCreep(Creep c) {
 		if (c.isByYou()) {
-			mCreepsByYou.add(c);
+			creepsByYou.add(c);
 		} else if (!c.isByYou()) {
-			mCreepsOnYou.add(c);
-		} else {
-			// c doesn't exist
+			creepsOnYou.add(c);
 		}
 	}
 
+	// Removes the passed creep from it's ArrayList
 	public void removeCreep(Creep c) {
 		if(c.isByYou()) {
-			mCreepsByYou.remove(mCreepsByYou.indexOf(c));
+			creepsByYou.remove(creepsByYou.indexOf(c));
 		} else if (!c.isByYou()) {
-			mCreepsOnYou.remove(mCreepsOnYou.indexOf(c));
-		} else {
-			// c doesn't exist
+			creepsOnYou.remove(creepsOnYou.indexOf(c));
 		}
 	}
 
+	// Removes all selected creeps from their ArrayLists
 	public Boolean removeSelections() {
 		Boolean removed = false;
 		// Remove all checked creeps
-		for (int i = 0; i < mCreepsOnYou.size(); i++) {
-			if (mCreepsOnYou.get(i).getIsChecked()) {
-				mCreepsOnYou.remove(i);
+		for (int i = 0; i < creepsOnYou.size(); i++) {
+			if (creepsOnYou.get(i).getIsChecked()) {
+				creepsOnYou.remove(i);
 				removed = true;
-				i--;
+				i--; // Because an element was just removed
 			}
 		}
-		for (int i = 0; i < mCreepsByYou.size(); i++) {
-			if (mCreepsByYou.get(i).getIsChecked()) {
-				mCreepsByYou.remove(i);
+		for (int i = 0; i < creepsByYou.size(); i++) {
+			if (creepsByYou.get(i).getIsChecked()) {
+				creepsByYou.remove(i);
 				removed = true;
-				i--;
+				i--; // Because an element was just removed
 			}
 		}
 
 		// Set all remaining creeps to unchecked
-		for (int i = 0; i < mCreepsOnYou.size(); i++) {
-			mCreepsOnYou.get(i).setIsChecked(false);
+		for (int i = 0; i < creepsOnYou.size(); i++) {
+			creepsOnYou.get(i).setIsChecked(false);
 		}
-		for (int i = 0; i < mCreepsByYou.size(); i++) {
-			mCreepsByYou.get(i).setIsChecked(false);
+		for (int i = 0; i < creepsByYou.size(); i++) {
+			creepsByYou.get(i).setIsChecked(false);
 		}
 		return removed;
 	}
 
+	// Checks for and removes all completed creeps
 	public void checkForCompletions() {
-		// Remove all completed creeps
-		for (int i = 0; i < mCreepsOnYou.size(); i++) {
-			if (mCreepsOnYou.get(i).getIsComplete()) {
-				mCreepsOnYou.remove(i);
+		for (int i = 0; i < creepsOnYou.size(); i++) {
+			if (creepsOnYou.get(i).getIsComplete()) {
+				creepsOnYou.remove(i);
 				if (i != 0)
-					i--;
+					i--; // Because an element was removed
 			}
 		}
-		for (int i = 0; i < mCreepsByYou.size(); i++) {
-			if (mCreepsByYou.get(i).getIsComplete()) {
-				mCreepsByYou.remove(i);
+		for (int i = 0; i < creepsByYou.size(); i++) {
+			if (creepsByYou.get(i).getIsComplete()) {
+				creepsByYou.remove(i);
 				if (i != 0)
-					i--;
+					i--; // Because an element was removed
 			}
 		}
 	}
