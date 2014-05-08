@@ -111,7 +111,14 @@ public class FriendSelectorFragment extends Fragment implements
 				creep.setIsComplete(false);
 
 				if (creep.getName() == null) {
-					Toast.makeText(getActivity(), "Please choose creep victim first!",
+					Toast.makeText(getActivity(), "Gotta choose creep victim first!",
+					    Toast.LENGTH_SHORT).show();
+					return;
+				}
+
+				if (parseFollowTime(v) == 0) {
+					Toast.makeText(getActivity(),
+					    "Creep duration must be longer than 00:00",
 					    Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -223,8 +230,18 @@ public class FriendSelectorFragment extends Fragment implements
 		int hours, minutes;
 
 		// Get values from EditTexts - default 05:00:00
-		hours = Integer.parseInt(hrs.getText().toString());
-		minutes = Integer.parseInt(mins.getText().toString());
+		// If text field is empty, value is 0
+		if (!hrs.getText().toString().isEmpty()) {
+			hours = Integer.parseInt(hrs.getText().toString());
+		} else {
+			hours = 0;
+		}
+
+		if (!mins.getText().toString().isEmpty()) {
+			minutes = Integer.parseInt(mins.getText().toString());
+		} else {
+			minutes = 0;
+		}
 
 		time = ((hours * 60) + minutes) * 60 * 1000; // to ms
 		return time;
