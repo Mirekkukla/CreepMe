@@ -1,8 +1,14 @@
 package com.mordor.creepme;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.telephony.TelephonyManager;
@@ -64,7 +70,7 @@ public class MainActivity extends Activity {
 		this.adp2.notifyDataSetChanged();
 	}
 
-	// Activity taken on Cancel All Selections Button click
+	// Action taken on Cancel All Selections Button click
 	public void cancelSelections(View v) {
 		try {
 			// If nothing gets removed, nothing was selected
@@ -76,6 +82,29 @@ public class MainActivity extends Activity {
 		}
 		this.adp1.notifyDataSetChanged();
 		this.adp2.notifyDataSetChanged();
+	}
+
+	// Action taken on Map All Selections Button click
+	public void mapSelections(View v) {
+		// Check for GPS enabled
+		final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			buildAlertMessageNoGps();
+		}
+
+		try {
+			ArrayList<UUID> selections = sLab.selectedCreeps();
+			if (selections.size() != 0) {
+				Intent i = new Intent(this, CreepMapActivity.class);
+				i.putExtra("victimsList", selections);
+				this.startActivity(i);
+			} else {
+				Toast.makeText(this, "Nothing selected", Toast.LENGTH_SHORT).show();
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "Exception error at mapSelections()");
+		}
 	}
 
 	// Builds the Activity Bar Menu
@@ -105,5 +134,26 @@ public class MainActivity extends Activity {
 			}
 
 		}.start();
+	}
+
+	private void buildAlertMessageNoGps() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder
+		    .setMessage("Your GPS seems to be disabled, do you want to enable it?")
+		    .setCancelable(false)
+		    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(final DialogInterface dialog, final int id) {
+				    startActivity(new Intent(
+				        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+			    }
+		    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(final DialogInterface dialog, final int id) {
+				    dialog.cancel();
+			    }
+		    });
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
 }

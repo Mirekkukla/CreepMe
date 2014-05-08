@@ -16,15 +16,15 @@ public class CreepLab {
 		this.creepsByYou = new ArrayList<Creep>();
 		this.creepsOnYou = new ArrayList<Creep>();
 		// Temporary list population for testing
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 3; i++) {
 			Date now = new Date();
 			Creep c = new Creep();
 			c.setTimeMade(now.getTime());
 			c.setName("Your Friend #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setTimeStarted(now.getTime());
-			c.setLatitude(43.479786);
-			c.setLongitude(-110.762334);
+			c.setLatitude(40.0176 + i * .01);
+			c.setLongitude(-105.2797 + i * .001);
 			c.setIsByYou(true);
 			c.setIsChecked(false);
 			c.setIsStarted(true);
@@ -38,8 +38,8 @@ public class CreepLab {
 			c.setName("Hot Chick #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setTimeStarted(now.getTime());
-			c.setLatitude(43.59);
-			c.setLongitude(-110.8);
+			c.setLatitude(40.0176 - (i + 1) * .01);
+			c.setLongitude(-105.2797 - (i + 1) * .001);
 			c.setIsByYou(false);
 			c.setIsChecked(false);
 			c.setIsStarted(true);
@@ -63,20 +63,19 @@ public class CreepLab {
 		}
 	}
 
-	public Creep getCreep(UUID id, Boolean isByYou) {
-		if (isByYou) {
-			for (Creep c : this.creepsByYou) {
-				if (c.getId().equals(id)) {
-					return c;
-				}
-			}
-		} else {
-			for (Creep c : this.creepsOnYou) {
-				if (c.getId().equals(id)) {
-					return c;
-				}
+	public Creep getCreep(UUID id) {
+		for (Creep c : this.creepsByYou) {
+			if (c.getId().equals(id)) {
+				return c;
 			}
 		}
+
+		for (Creep c : this.creepsOnYou) {
+			if (c.getId().equals(id)) {
+				return c;
+			}
+		}
+
 		return null;
 	}
 
@@ -124,6 +123,29 @@ public class CreepLab {
 			this.creepsByYou.get(i).setIsChecked(false);
 		}
 		return removed;
+	}
+
+	// Returns list of all selected creeps' UUID
+	public ArrayList<UUID> selectedCreeps() {
+		ArrayList<UUID> selections = new ArrayList<UUID>();
+		// Add all checked creeps
+		for (int i = 0; i < this.creepsByYou.size(); i++) {
+			Creep c = this.creepsByYou.get(i);
+			if (c.getIsChecked()) {
+				selections.add(c.getId());
+				// Set unchecked once added to map
+				c.setIsChecked(false);
+			}
+		}
+		for (int i = 0; i < this.creepsOnYou.size(); i++) {
+			Creep c = this.creepsOnYou.get(i);
+			if (c.getIsChecked()) {
+				selections.add(c.getId());
+				// Set unchecked once added to map
+				c.setIsChecked(false);
+			}
+		}
+		return selections;
 	}
 
 	// Checks for and removes all completed creeps

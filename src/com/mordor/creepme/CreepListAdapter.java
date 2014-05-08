@@ -2,10 +2,14 @@ package com.mordor.creepme;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -62,20 +66,19 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		convertView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (current.isByYou()) {
-					Intent i = new Intent(context, CreepMapActivity.class);
-					i.putExtra("lat", current.getLatitude());
-					i.putExtra("lng", current.getLongitude());
-					i.putExtra("name", current.getName());
-					context.startActivity(i);
-				} else {
-					Intent i = new Intent(context, CreepMapActivity.class);
-					i.putExtra("lat", current.getLatitude());
-					i.putExtra("lng", current.getLongitude());
-					i.putExtra("name", current.getName());
-					context.startActivity(i);
+				// Check for GPS enabled
+				final LocationManager manager = (LocationManager) context
+				    .getSystemService(Context.LOCATION_SERVICE);
+				if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+					buildAlertMessageNoGps();
+					return;
 				}
 
+				ArrayList<UUID> victim = new ArrayList<UUID>();
+				victim.add(current.getId());
+				Intent i = new Intent(context, CreepMapActivity.class);
+				i.putExtra("victimsList", victim);
+				context.startActivity(i);
 			}
 
 		});
@@ -127,6 +130,27 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		// holder.gps.setImageDrawable(current.get)
 
 		return convertView;
+	}
+
+	private void buildAlertMessageNoGps() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder
+		    .setMessage("Your GPS seems to be disabled, do you want to enable it?")
+		    .setCancelable(false)
+		    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(final DialogInterface dialog, final int id) {
+				    context.startActivity(new Intent(
+				        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+			    }
+		    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(final DialogInterface dialog, final int id) {
+				    dialog.cancel();
+			    }
+		    });
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	static class CreepHolder {
