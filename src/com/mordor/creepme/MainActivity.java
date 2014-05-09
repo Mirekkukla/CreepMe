@@ -124,6 +124,9 @@ public class MainActivity extends Activity {
 		case R.id.action_map_selections:
 			mapSelections();
 			return true;
+		case R.id.action_map_selections_text:
+			mapSelections();
+			return true;
 		case R.id.action_delete_selections:
 			cancelSelections(v);
 			return true;

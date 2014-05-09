@@ -1,0 +1,15 @@
+CreepMe to-do list
+=======
+
+- Make custom adapter to show phone number in autocomplete 
+listview element, as well as name. Right now the stock ArrayAdapter<String> 
+can only fill the top textview and every time I get the bottom 
+one to fill, the autocomplete stops working.
+
+- get profile pic from contact
+
+- add circular crop to profile pictures
+
+- Rearrange items in a listview by drag and drop
+
+- Build Settings page

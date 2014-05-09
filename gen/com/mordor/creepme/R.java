@@ -1293,6 +1293,7 @@ containing a value of this type.
         public static final int action_context_bar=0x7f060020;
         public static final int action_delete_selections=0x7f060053;
         public static final int action_map_selections=0x7f060054;
+        public static final int action_map_selections_text=0x7f060055;
         public static final int action_menu_divider=0x7f060019;
         public static final int action_menu_presenter=0x7f06001a;
         public static final int action_mode_close_button=0x7f060027;

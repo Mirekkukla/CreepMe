@@ -6,23 +6,29 @@
     <item
         android:id="@+id/action_add_creep"
         android:orderInCategory="10"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/add_creep"
         android:icon="@drawable/ic_action_add_person" />
     
     <item
         android:id="@+id/action_delete_selections"
         android:orderInCategory="20"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/delete_selections"
         android:icon="@drawable/ic_action_discard" />
     
     <item
         android:id="@+id/action_map_selections"
         android:orderInCategory="30"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/map_selections"
         android:icon="@drawable/ic_action_map" />
+    
+    <item
+        android:id="@+id/action_map_selections_text"
+        android:orderInCategory="40"
+        android:showAsAction="never"
+        android:title="@string/map_selections" />
     
     <item
         android:id="@+id/action_settings"
