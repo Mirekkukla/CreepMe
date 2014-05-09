@@ -8,6 +8,7 @@ import java.util.Map;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,15 +41,13 @@ public class FriendSelectorFragment extends Fragment implements
 	// Store contacts values in HashMap
 	public Map<String, Contact> contactMap = new HashMap<String, Contact>();
 
-	EditText toNumber = null;
-	String toNumberValue = "";
-
 	private Creep creep;
 
 	private Button startCreepButton;
 	private EditText hrs;
 	private EditText mins;
 	private TextView nameTextView;
+	private ImageView profileImageView;
 
 	// Builds main fragment view for FriendSelector
 	@Override
@@ -61,13 +61,17 @@ public class FriendSelectorFragment extends Fragment implements
 
 		// Display home as up
 		getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
-		creep = new Creep();
+		this.creep = new Creep();
 
 		// Initialize AutoCompleteTextView values
-
 		this.textView = (AutoCompleteTextView) v
 		    .findViewById(R.id.to_numberAutoText);
-		nameTextView = (TextView) v.findViewById(R.id.friend_nameText);
+		this.nameTextView = (TextView) v.findViewById(R.id.friend_nameText);
+
+		// Initialize profile picture ImageView to default
+		this.profileImageView = (ImageView) v
+		    .findViewById(R.id.selector_profileImage);
+		this.profileImageView.setImageResource(R.drawable.profile_default);
 
 		// Create adapter (will change to custom, to display phone # as well)
 		this.adapter = new ArrayAdapter<String>(getActivity(),
@@ -84,6 +88,7 @@ public class FriendSelectorFragment extends Fragment implements
 		// used by AutoCompleteTextView
 		readContactData();
 
+		// Set EditText variables
 		hrs = (EditText) v.findViewById(R.id.hrsEditText);
 		mins = (EditText) v.findViewById(R.id.minsEditText);
 
@@ -109,6 +114,9 @@ public class FriendSelectorFragment extends Fragment implements
 				// Creep has not yet started
 				creep.setIsStarted(false);
 				creep.setIsComplete(false);
+
+				// Set GPS default to not enabled
+				creep.setGpsEnabled(false);
 
 				if (creep.getName() == null) {
 					Toast.makeText(getActivity(), "Gotta choose creep victim first!",
@@ -171,10 +179,10 @@ public class FriendSelectorFragment extends Fragment implements
 					}
 
 					// Update contact HashMap
-					Contact c = new Contact();
-					c.setName(name);
-					c.setNumber(phoneNumber);
-					contactMap.put(name, c);
+					Contact contact = new Contact();
+					contact.setName(name);
+					contact.setNumber(phoneNumber);
+					contactMap.put(name, contact);
 
 					// Add contacts name to adapter
 					this.adapter.add(name);
@@ -205,13 +213,13 @@ public class FriendSelectorFragment extends Fragment implements
 	    long arg3) {
 		// Get Array index value for selected name
 		String name = adapterView.getItemAtPosition(pos).toString();
-		Contact c = contactMap.get(name);
+		Contact contact = contactMap.get(name);
 
 		// If name exists in HashMap, set as creep data
-		if (c != null) {
-			setCreepView(name);
-			creep.setName(name);
-			creep.setNumber(c.getNumber());
+		if (contact != null) {
+			this.creep.setName(name);
+			this.creep.setNumber(contact.getNumber());
+			setCreepView();
 		}
 
 		InputMethodManager imm = (InputMethodManager) getActivity()
@@ -220,9 +228,16 @@ public class FriendSelectorFragment extends Fragment implements
 		    .getWindowToken(), 0);
 	}
 
-	// Changes victim name text from default to reflect contact choice
-	private void setCreepView(String name) {
-		nameTextView.setText(name);
+	// Changes victim name, picture from default to reflect contact choice
+	private void setCreepView() {
+		nameTextView.setText(this.creep.getName());
+		if (creep.getProfilePic() != null) {
+			// Victim has profile picture, change from default
+			// this.profileImageView.setImageResource(R.drawable.profile_default);
+		} else {
+			creep.setProfilePic(((BitmapDrawable) profileImageView.getDrawable())
+			    .getBitmap());
+		}
 	}
 
 	private long parseFollowTime(View v) {
@@ -251,7 +266,7 @@ public class FriendSelectorFragment extends Fragment implements
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.fragment_main_options, menu);
+		inflater.inflate(R.menu.friend_selector_options, menu);
 	}
 
 	// Deals with Activity Bar and Menu item selections

@@ -23,6 +23,7 @@ public class CreepLab {
 			c.setName("Your Friend #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setTimeStarted(now.getTime());
+			c.setGpsEnabled(true);
 			c.setLatitude(40.0176 + i * .01);
 			c.setLongitude(-105.2797 + i * .001);
 			c.setIsByYou(true);
@@ -38,6 +39,7 @@ public class CreepLab {
 			c.setName("Hot Chick #" + (i + 1));
 			c.setFollowTime((i + 1) * 1000 * 60 * 60);
 			c.setTimeStarted(now.getTime());
+			c.setGpsEnabled(false);
 			c.setLatitude(40.0176 - (i + 1) * .01);
 			c.setLongitude(-105.2797 - (i + 1) * .001);
 			c.setIsByYou(false);

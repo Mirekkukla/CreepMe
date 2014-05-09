@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.creepme.MainActivity" >
+
+    <item
+        android:id="@+id/action_add_creep"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom"
+        android:title="@string/add_creep"
+        android:icon="@drawable/ic_action_add_person" />
+    
+    <item
+        android:id="@+id/action_delete_selections"
+        android:orderInCategory="20"
+        android:showAsAction="ifRoom"
+        android:title="@string/delete_selections"
+        android:icon="@drawable/ic_action_discard" />
+    
+    <item
+        android:id="@+id/action_map_selections"
+        android:orderInCategory="30"
+        android:showAsAction="ifRoom"
+        android:title="@string/map_selections"
+        android:icon="@drawable/ic_action_map" />
+    
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+
+</menu>

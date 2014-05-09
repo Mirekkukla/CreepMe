@@ -92,10 +92,17 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			}
 		});
 
-		// holder.profilePic.setImageDrawable(current.getProfilePic());
+		// Set profile picture ImageView
+		if (current.getProfilePic() != null) {
+			holder.profilePic.setImageBitmap(current.getProfilePic());
+		} else {
+			holder.profilePic.setImageResource(R.drawable.profile_default);
+		}
+
+		// Set name TextView
 		holder.name.setText(current.getName());
 
-		// Update creep time left
+		// Update time remaining TextView
 		this.tv = holder.timeLeft;
 		Date currT = new Date();
 		if (!current.getIsStarted()) {
@@ -127,7 +134,14 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 			}
 		}
 
-		// holder.gps.setImageDrawable(current.get)
+		// Set GPS enabled ImageView
+		if(current.gpsEnabled()) {
+			// Their GPS is enabled
+			holder.gps.setImageResource(R.drawable.gps_check);
+		} else {
+			// Their GPS is not enabled
+			holder.gps.setImageResource(R.drawable.gps_x);
+		}
 
 		return convertView;
 	}

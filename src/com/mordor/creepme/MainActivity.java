@@ -15,6 +15,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -85,7 +86,7 @@ public class MainActivity extends Activity {
 	}
 
 	// Action taken on Map All Selections Button click
-	public void mapSelections(View v) {
+	public void mapSelections() {
 		// Check for GPS enabled
 		final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -111,8 +112,30 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = new MenuInflater(this);
-		inflater.inflate(R.menu.fragment_main_options, menu);
+		inflater.inflate(R.menu.main_options, menu);
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	// Deals with Activity Bar and Menu item selections
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		View v = findViewById(android.R.id.content);
+		switch (item.getItemId()) {
+		case R.id.action_map_selections:
+			mapSelections();
+			return true;
+		case R.id.action_delete_selections:
+			cancelSelections(v);
+			return true;
+		case R.id.action_add_creep:
+			newFriendSelector(v);
+			return true;
+		case R.id.action_settings:
+			// Open settings page
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	// Starts a timer to update timers every second

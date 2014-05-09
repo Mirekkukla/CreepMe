@@ -18,6 +18,7 @@ public class Creep {
 	private Boolean isChecked;
 	private Boolean isStarted;
 	private Boolean isComplete;
+	private Boolean gpsEnabled;
 	private Double latitude;
 	private Double longitude;
 
@@ -71,6 +72,14 @@ public class Creep {
 
 	public void setProfilePic(Bitmap pic) {
 		this.profilePic = pic;
+	}
+
+	public Boolean gpsEnabled() {
+		return this.gpsEnabled;
+	}
+
+	public void setGpsEnabled(Boolean bool) {
+		this.gpsEnabled = bool;
 	}
 
 	public UUID getId() {
