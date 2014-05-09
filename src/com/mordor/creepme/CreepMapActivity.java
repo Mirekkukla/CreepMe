@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -185,6 +188,39 @@ public class CreepMapActivity extends Activity {
 			startActivity(intent);
 		}
 
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		// Check for GPS enabled on resume
+		final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			buildAlertMessageNoGps();
+		}
+	}
+
+	private void buildAlertMessageNoGps() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder
+		    .setMessage("Your GPS seems to be disabled, do you want to enable it?")
+		    .setCancelable(false)
+		    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(final DialogInterface dialog, final int id) {
+				    startActivity(new Intent(
+				        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+			    }
+		    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(final DialogInterface dialog, final int id) {
+				    dialog.cancel();
+				    finish();
+			    }
+		    });
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 }
