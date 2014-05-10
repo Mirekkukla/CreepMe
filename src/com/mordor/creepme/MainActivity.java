@@ -140,19 +140,24 @@ public class MainActivity extends Activity {
 
 	// Starts a timer to update timers every second
 	public void implementListViewTimer() {
-		// Timer counts down every second, by 1000 ms intervals
-		new CountDownTimer(1000, 1000) {
+		// Timer counts down every 60 seconds, by 1 second intervals
+		new CountDownTimer(60000, 1000) {
 			@Override
 			public void onTick(long millisUntilFinished) {
-
+				sLab.checkForCompletions();
+				adp1.notifyDataSetChanged();
+				adp2.notifyDataSetChanged();
 			}
 
 			@Override
 			public void onFinish() {
-				sLab.checkForCompletions();
-				adp1.notifyDataSetChanged();
-				adp2.notifyDataSetChanged();
-				// Restarts every second
+				/*
+				 * On timer finish, get GPS data on active creeps from server. if GPS
+				 * status has changed, update GPS icon. If location has changed, update
+				 * creep location data
+				 */
+
+				// Restarts
 				implementListViewTimer();
 			}
 

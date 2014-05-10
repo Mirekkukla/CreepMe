@@ -14,11 +14,13 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewManager;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +35,7 @@ public class CreepMapActivity extends Activity {
 	private String dirPoints;
 	private ArrayList<UUID> victimsList;
 	private Location location;
+	private LatLngBounds.Builder builder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class CreepMapActivity extends Activity {
 		setContentView(R.layout.fragment_map);
 
 		// Initialize map builder
-		LatLngBounds.Builder builder = new LatLngBounds.Builder();
+		builder = new LatLngBounds.Builder();
 
 		// Get a handle to the Map Fragment
 		final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(
@@ -67,9 +70,6 @@ public class CreepMapActivity extends Activity {
 				// Get the creep
 				Creep c = MainActivity.sLab.getCreep(victimsList.get(i));
 
-				// Set creep location to builder
-				builder.include(new LatLng(c.getLatitude(), c.getLongitude()));
-
 				// Update header TextView with name of creep
 				if (i != 0) {
 					nameTextView.setText(nameTextView.getText() + ", " + c.getName());
@@ -87,14 +87,11 @@ public class CreepMapActivity extends Activity {
 				((ViewManager) v.getParent()).removeView(v);
 			}
 
-			// Check if user location is available
-			if (location != null) {
-				// Add user location to bounds
-				builder.include(new LatLng(location.getLatitude(), location
-				    .getLongitude()));
-			}
 			// Zoom in on the defined bounds
-			zoomInOnCreeps(map, builder);
+			zoomInOnCreeps(map);
+
+			// Start update timer
+			implementLocationTimer(map, this.findViewById(R.id.zoomCheckBox));
 		}
 
 		// Display home as up in Activity Bar
@@ -102,12 +99,25 @@ public class CreepMapActivity extends Activity {
 	}
 
 	/* Zooms map view in to bounds defined to include all creeps */
-	private void zoomInOnCreeps(final GoogleMap map,
-	    final LatLngBounds.Builder builder) {
+	private void zoomInOnCreeps(final GoogleMap map) {
 		// Set bounds
+		for (int i = 0; i < victimsList.size(); i++) {
+			// Get the creep
+			Creep c = MainActivity.sLab.getCreep(victimsList.get(i));
+
+			// Set creep location to builder
+			builder.include(new LatLng(c.getLatitude(), c.getLongitude()));
+		}
+		// Check if user location is available
+		if (location != null) {
+			// Add user location to bounds
+			builder.include(new LatLng(location.getLatitude(), location
+			    .getLongitude()));
+		}
 		final LatLngBounds bounds = builder.build();
+
 		try {
-			map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 75));
+			map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
 		} catch (Exception e) {
 			// layout not yet initialized
 			final View mapView = getFragmentManager().findFragmentById(
@@ -121,7 +131,7 @@ public class CreepMapActivity extends Activity {
 					    public void onGlobalLayout() {
 						    mapView.getViewTreeObserver()
 						        .removeOnGlobalLayoutListener(this);
-						    map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 75));
+						    map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
 					    }
 				    });
 			}
@@ -139,6 +149,11 @@ public class CreepMapActivity extends Activity {
 			// Get the creep
 			Creep c = MainActivity.sLab.getCreep(victimsList.get(i));
 
+			/* START TEMPORARY TEST CODE - MOVES DUMMY CREEPS ON EACH UPDATE */
+			c.setLatitude(c.getLatitude() + .001);
+			c.setLongitude(c.getLongitude() + .001);
+			/* END TEMPORARY TEST CODE - MOVES DUMMY CREEPS ON EACH UPDATE */
+
 			// Get creep location
 			LatLng creepLocation = new LatLng(c.getLatitude(), c.getLongitude());
 
@@ -147,15 +162,15 @@ public class CreepMapActivity extends Activity {
 			if (!c.isByYou()) {
 				creepTag = "Creeper";
 				map.addMarker(new MarkerOptions()
-				    .title(creepTag)
-				    .snippet(c.getName())
+				    .title(c.getName())
+				    .snippet(creepTag)
 				    .position(creepLocation)
 				    .icon(
 				        BitmapDescriptorFactory
 				            .defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 			} else {
 				creepTag = "Victim";
-				map.addMarker(new MarkerOptions().title(creepTag).snippet(c.getName())
+				map.addMarker(new MarkerOptions().title(c.getName()).snippet(creepTag)
 				    .position(creepLocation));
 			}
 
@@ -188,6 +203,37 @@ public class CreepMapActivity extends Activity {
 			startActivity(intent);
 		}
 
+	}
+
+	// Implements timer to get updated creep location data
+	public void implementLocationTimer(final GoogleMap map, final View checkBox) {
+		// Timer counts down every 5 seconds, by 1 second intervals
+		new CountDownTimer(5000, 1000) {
+			@Override
+			public void onTick(long millisUntilFinished) {
+
+			}
+
+			@Override
+			public void onFinish() {
+				/*
+				 * On timer finish, get GPS data on mapped creeps from server. if GPS
+				 * status has changed, update creep location data.
+				 */
+
+				// Updates location on map
+				updateLocations(map);
+
+				// Re-zooms map if box is checked
+				CheckBox zoomCheck = (CheckBox) checkBox;
+				if (zoomCheck.isChecked()) {
+					zoomInOnCreeps(map);
+				}
+
+				// Restarts
+				implementLocationTimer(map, checkBox);
+			}
+		}.start();
 	}
 
 	@Override

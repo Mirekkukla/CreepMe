@@ -1282,7 +1282,7 @@ containing a value of this type.
         public static final int profile_default=0x7f020079;
     }
     public static final class id {
-        public static final int action_add_creep=0x7f060053;
+        public static final int action_add_creep=0x7f060054;
         public static final int action_bar=0x7f06001f;
         public static final int action_bar_activity_content=0x7f060018;
         public static final int action_bar_container=0x7f06001e;
@@ -1291,12 +1291,12 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f060026;
         public static final int action_bar_title=0x7f060025;
         public static final int action_context_bar=0x7f060020;
-        public static final int action_delete_selections=0x7f060054;
-        public static final int action_map_selections=0x7f060055;
+        public static final int action_delete_selections=0x7f060055;
+        public static final int action_map_selections=0x7f060056;
         public static final int action_menu_divider=0x7f060019;
         public static final int action_menu_presenter=0x7f06001a;
         public static final int action_mode_close_button=0x7f060027;
-        public static final int action_settings=0x7f060052;
+        public static final int action_settings=0x7f060053;
         public static final int activity_chooser_view_content=0x7f060028;
         public static final int always=0x7f06000f;
         public static final int beginning=0x7f060014;
@@ -1304,11 +1304,11 @@ containing a value of this type.
         public static final int cancel_selectionButton=0x7f060042;
         public static final int checkbox=0x7f060030;
         public static final int collapseActionView=0x7f060011;
-        public static final int creep_mapFragment=0x7f060050;
+        public static final int creep_mapFragment=0x7f060051;
         public static final int creep_new_friendButton=0x7f060043;
         public static final int default_activity_button=0x7f06002b;
         public static final int dialog=0x7f060012;
-        public static final int directionsButton=0x7f060051;
+        public static final int directionsButton=0x7f060052;
         public static final int disableHome=0x7f06000c;
         public static final int dropdown=0x7f060013;
         public static final int edit_query=0x7f060033;
@@ -1368,6 +1368,7 @@ containing a value of this type.
         public static final int who_creeping_youList=0x7f060041;
         public static final int who_you_creepingList=0x7f060040;
         public static final int withText=0x7f060010;
+        public static final int zoomCheckBox=0x7f060050;
     }
     public static final class integer {
         /**  The maximum number of action buttons that should be permitted within

@@ -11,6 +11,13 @@
         android:background="#d3d3d3"
         android:gravity="center_horizontal"
         android:text="@string/default_friend_name" />
+    
+    <CheckBox
+        android:id="@+id/zoomCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Re-zoom map on creep location update"
+        android:layout_marginLeft="7dp" />
 
     <fragment
         android:id="@+id/creep_mapFragment"
