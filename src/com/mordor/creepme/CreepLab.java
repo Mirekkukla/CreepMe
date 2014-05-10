@@ -16,7 +16,7 @@ public class CreepLab {
 		this.creepsByYou = new ArrayList<Creep>();
 		this.creepsOnYou = new ArrayList<Creep>();
 		// Temporary list population for testing
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 7; i++) {
 			Date now = new Date();
 			Creep c = new Creep();
 			c.setTimeMade(now.getTime());

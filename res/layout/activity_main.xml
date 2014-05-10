@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_marginTop="5dp"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
@@ -26,17 +27,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:fadeScrollbars="false" />
-
-        <Button
-            android:id="@+id/creep_new_friendButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="0"
-            android:onClick="newFriendSelector"
-            android:text="@string/creep_new_friend" />
+        
     </LinearLayout>
 
     <LinearLayout
@@ -60,18 +51,38 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:fadeScrollbars="false" />
-
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal" >
+        
         <Button
             android:id="@+id/cancel_selectionButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="0"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:onClick="cancelSelections"
-            android:text="@string/cancel_selections" />
+            android:text="@string/cancel_all_selections" />
+        
+        <Button
+            android:id="@+id/creep_new_friendButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="newFriendSelector"
+            android:text="@string/add_new_creep" />
+        
+        <Button
+            android:id="@+id/map_selectionButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="mapSelections"
+            android:text="@string/map_all_selections" />
+        
     </LinearLayout>
 
 </LinearLayout>
