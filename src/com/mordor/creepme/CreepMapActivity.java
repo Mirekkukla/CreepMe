@@ -36,10 +36,17 @@ public class CreepMapActivity extends Activity {
 	private ArrayList<UUID> victimsList;
 	private Location location;
 	private LatLngBounds.Builder builder;
+	static CreepMapActivity thisActivity;
+	public CountDownTimer timer;
+
+	public static CreepMapActivity getInstance() {
+		return thisActivity;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		thisActivity = this;
 		setContentView(R.layout.fragment_map);
 
 		// Initialize map builder
@@ -208,10 +215,10 @@ public class CreepMapActivity extends Activity {
 	// Implements timer to get updated creep location data
 	public void implementLocationTimer(final GoogleMap map, final View checkBox) {
 		// Timer counts down every 5 seconds, by 1 second intervals
-		new CountDownTimer(5000, 1000) {
+		timer = new CountDownTimer(5000, 1000) {
 			@Override
 			public void onTick(long millisUntilFinished) {
-
+				// Each second
 			}
 
 			@Override
@@ -245,6 +252,9 @@ public class CreepMapActivity extends Activity {
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			buildAlertMessageNoGps();
 		}
+
+		// Restart timer
+		timer.start();
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -269,4 +279,15 @@ public class CreepMapActivity extends Activity {
 		alert.show();
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		timer.cancel();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		timer.cancel();
+	}
 }

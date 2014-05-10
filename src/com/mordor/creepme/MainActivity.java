@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
 	public static String sPhoneNumber;
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
+	private CountDownTimer mainTimer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,26 @@ public class MainActivity extends Activity {
 		// Update lists on activity resume
 		this.adp1.notifyDataSetChanged();
 		this.adp2.notifyDataSetChanged();
+
+		// If there's an instance of CreepMapActivity open, kill it
+		if (CreepMapActivity.getInstance() != null) {
+			CreepMapActivity.getInstance().finish();
+		}
+
+		// Restart main timer
+		mainTimer.start();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		mainTimer.cancel();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		mainTimer.cancel();
 	}
 
 	// Action taken on Cancel All Selections Button click
@@ -141,7 +162,7 @@ public class MainActivity extends Activity {
 	// Starts a timer to update timers every second
 	public void implementListViewTimer() {
 		// Timer counts down every 60 seconds, by 1 second intervals
-		new CountDownTimer(60000, 1000) {
+		mainTimer = new CountDownTimer(60000, 1500) {
 			@Override
 			public void onTick(long millisUntilFinished) {
 				sLab.checkForCompletions();
