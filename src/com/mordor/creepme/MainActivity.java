@@ -1,8 +1,6 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -12,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
@@ -27,19 +26,24 @@ public class MainActivity extends Activity {
 	public static String sPhoneNumber;
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
-	private Timer mainTimer;
+	private Handler timerHandler;
+	private final int timeInterval = 1000; // Update interval, milliseconds
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// Set session's creep manager
 		sLab = CreepLab.get(this);
 
 		// Get user's phone number
 		TelephonyManager telManager = (TelephonyManager) this
 		    .getSystemService(Context.TELEPHONY_SERVICE);
 		sPhoneNumber = telManager.getLine1Number();
+
+		// Initialize timer handler
+		this.timerHandler = new Handler();
 
 		// Define ListViews locally, linked to layout
 		ListView lv1 = (ListView) findViewById(R.id.who_you_creepingList);
@@ -55,44 +59,18 @@ public class MainActivity extends Activity {
 		lv1.setAdapter(this.adp1);
 		lv2.setAdapter(this.adp2);
 
-		implementListViewTimer();
-
 	}
 
-	// Defines and activates intent that opens FriendSelector activity
+	/* Action taken on Add New Creep Button click */
 	public void newFriendSelector(View v) {
+		// Defines intent for new creep activity
 		Intent i = new Intent(this, FriendSelectorActivity.class);
+
+		// Opens new creep activity
 		startActivity(i);
 	}
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		// Update lists on activity resume
-		this.adp1.notifyDataSetChanged();
-		this.adp2.notifyDataSetChanged();
-
-		// If there's an instance of CreepMapActivity open, kill it
-		if (CreepMapActivity.getInstance() != null) {
-			CreepMapActivity.getInstance().finish();
-		}
-
-		implementListViewTimer();
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		mainTimer.cancel();
-	}
-
-	@Override
-	public void onStop() {
-		super.onStop();
-		mainTimer.cancel();
-	}
-
-	// Action taken on Cancel All Selections Button click
+	/* Action taken on Cancel All Selections Button click */
 	public void cancelSelections(View v) {
 		try {
 			// If nothing gets removed, nothing was selected
@@ -102,16 +80,20 @@ public class MainActivity extends Activity {
 		} catch (Exception e) {
 			Log.e(TAG, "Exception error at cancelSelections()");
 		}
+
+		// Update listView elements
 		this.adp1.notifyDataSetChanged();
 		this.adp2.notifyDataSetChanged();
 	}
 
-	// Action taken on Map All Selections Button click
+	/* Action taken on Map All Selections Button click */
 	public void mapSelections(View v) {
 		// Check for GPS enabled
 		final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+		// Check for GPS enabled. If not...
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			// Dialog and no map
 			buildAlertMessageNoGps();
 		}
 
@@ -129,57 +111,33 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	// Builds the Activity Bar Menu
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = new MenuInflater(this);
-		inflater.inflate(R.menu.main_options, menu);
-		return super.onCreateOptionsMenu(menu);
-	}
+	/* Implements timer to update listView elements */
+	Runnable listViewUpdater = new Runnable() {
+		@Override
+		public void run() {
+			sLab.checkForCompletions();
+			adp1.notifyDataSetChanged();
+			adp2.notifyDataSetChanged();
 
-	// Deals with Activity Bar and Menu item selections
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		View v = findViewById(android.R.id.content);
-		switch (item.getItemId()) {
-		case R.id.action_map_selections:
-			mapSelections(v);
-			return true;
-		case R.id.action_delete_selections:
-			cancelSelections(v);
-			return true;
-		case R.id.action_add_creep:
-			newFriendSelector(v);
-			return true;
-		case R.id.action_settings:
-			// Open settings page
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			timerHandler.postDelayed(listViewUpdater, timeInterval);
 		}
+	};
+
+	/* Starts listView update timer */
+	private void startTimer() {
+		listViewUpdater.run();
 	}
 
-	// Starts a timer to update timers every second
-	private void implementListViewTimer() {
-		// Timer counts down every second
-		mainTimer = new Timer();
-		mainTimer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						sLab.checkForCompletions();
-						adp1.notifyDataSetChanged();
-						adp2.notifyDataSetChanged();
-					}
-				});
-			}
-		}, 0, 1000);
+	/* Stops listView update timer */
+	private void stopTimer() {
+		this.timerHandler.removeCallbacks(listViewUpdater);
 	}
 
+	/* Builds GPS not enabled alert message and provides option to re-enable */
 	private void buildAlertMessageNoGps() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		// Alert dialog blocks activity from running and opening map,
+		// allows user to go direct to enable screen
 		builder
 		    .setMessage("Your GPS seems to be disabled, do you want to enable it?")
 		    .setCancelable(false)
@@ -197,5 +155,62 @@ public class MainActivity extends Activity {
 		    });
 		final AlertDialog alert = builder.create();
 		alert.show();
+	}
+
+	/* Action taken when activity is resumed */
+	@Override
+	public void onResume() {
+		super.onResume();
+		// Update lists on activity resume
+		this.adp1.notifyDataSetChanged();
+		this.adp2.notifyDataSetChanged();
+
+		// If there's an instance of CreepMapActivity open, kill it
+		if (CreepMapActivity.getInstance() != null) {
+			CreepMapActivity.getInstance().finish();
+		}
+
+		// ListView update timer restarted
+		startTimer();
+	}
+
+	/* Action taken when activity is paused or destroyed */
+	@Override
+	public void onPause() {
+		stopTimer();
+		super.onPause();
+	}
+
+	/* Builds the Activity Bar Menu */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = new MenuInflater(this);
+		inflater.inflate(R.menu.main_options, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	/* Deals with Activity Bar and Menu item selections */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		View v = findViewById(android.R.id.content);
+		switch (item.getItemId()) {
+		case R.id.action_map_selections:
+			// Opens new map activity with selected creeps mapped
+			mapSelections(v);
+			return true;
+		case R.id.action_delete_selections:
+			// Cancels selected creeps
+			cancelSelections(v);
+			return true;
+		case R.id.action_add_creep:
+			// Opens new creep activity
+			newFriendSelector(v);
+			return true;
+		case R.id.action_settings:
+			// Open settings activity
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }

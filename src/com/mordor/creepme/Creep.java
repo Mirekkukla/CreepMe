@@ -22,7 +22,7 @@ public class Creep {
 	private Double latitude;
 	private Double longitude;
 
-	// Initializes UUID when creating a new Creep
+	/* Initializes UUID when creating a new Creep */
 	public Creep() {
 		this.id = UUID.randomUUID();
 	}
@@ -59,7 +59,7 @@ public class Creep {
 		this.followTime = time;
 	}
 
-	// Returns time in milliseconds
+	/* Returns time remaining in milliseconds */
 	public long getTimeRemaining() {
 		Date now = new Date();
 		this.timeRemaining = now.getTime() - this.timeStarted;

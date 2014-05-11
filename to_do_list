@@ -13,5 +13,3 @@ one to fill, the autocomplete stops working.
 - Rearrange items in a listview by drag and drop
 
 - Build Settings page
-
-- BUG: Get timers for main activity and map activity to only run when their activity is open.

@@ -146,8 +146,11 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		return convertView;
 	}
 
+	/* Builds GPS not enabled alert message and provides option to re-enable */
 	private void buildAlertMessageNoGps() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		// Alert dialog blocks activity from running and opening map,
+		// allows user to go direct to enable screen
 		builder
 		    .setMessage("Your GPS seems to be disabled, do you want to enable it?")
 		    .setCancelable(false)
@@ -167,6 +170,7 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		alert.show();
 	}
 
+	/* Holds list element component views */
 	static class CreepHolder {
 		CheckBox checkBox;
 		ImageView profilePic;

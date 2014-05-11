@@ -41,15 +41,14 @@ public class FriendSelectorFragment extends Fragment implements
 	// Store contacts values in HashMap
 	public Map<String, Contact> contactMap = new HashMap<String, Contact>();
 
+	// Initialize general variables
 	private Creep creep;
-
 	private Button startCreepButton;
 	private EditText hrs;
 	private EditText mins;
 	private TextView nameTextView;
 	private ImageView profileImageView;
 
-	// Builds main fragment view for FriendSelector
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
 	    Bundle savedInstanceState) {
@@ -149,7 +148,7 @@ public class FriendSelectorFragment extends Fragment implements
 		return v;
 	}
 
-	// Read phone contact name and phone number(s)
+	/* Reads phone contact name and phone number(s) */
 	private void readContactData() {
 		final String[] PROJECTION = new String[] {
 		    ContactsContract.Contacts.DISPLAY_NAME,
@@ -193,12 +192,14 @@ public class FriendSelectorFragment extends Fragment implements
 		}
 	}
 
+	/* Action taken when an auto-complete list item is selected */
 	@Override
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
 	    long arg3) {
 		// Nothing
 	}
 
+	/* Action taken when no auto-complete list item is selected */
 	@Override
 	public void onNothingSelected(AdapterView<?> adapterView) {
 		InputMethodManager imm = (InputMethodManager) getActivity()
@@ -208,6 +209,7 @@ public class FriendSelectorFragment extends Fragment implements
 
 	}
 
+	/* Action taken when an auto-complete list item is clicked */
 	@Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int pos,
 	    long arg3) {
@@ -228,7 +230,7 @@ public class FriendSelectorFragment extends Fragment implements
 		    .getWindowToken(), 0);
 	}
 
-	// Changes victim name, picture from default to reflect contact choice
+	/* Changes victim name, picture from default to reflect contact choice */
 	private void setCreepView() {
 		nameTextView.setText(this.creep.getName());
 		if (creep.getProfilePic() != null) {
@@ -240,6 +242,7 @@ public class FriendSelectorFragment extends Fragment implements
 		}
 	}
 
+	/* Parses follow time from EditText hour/minute fields to milliseconds */
 	private long parseFollowTime(View v) {
 		long time;
 		int hours, minutes;
@@ -258,18 +261,18 @@ public class FriendSelectorFragment extends Fragment implements
 			minutes = 0;
 		}
 
-		time = ((hours * 60) + minutes) * 60 * 1000; // to ms
+		time = ((hours * 60) + minutes) * 60 * 1000; // to milliseconds
 		return time;
 	}
 
-	// Builds the Activity Bar Menu
+	/* Builds the Activity Bar Menu */
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 		inflater.inflate(R.menu.friend_selector_options, menu);
 	}
 
-	// Deals with Activity Bar and Menu item selections
+	/* Deals with Activity Bar and Menu item selections */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

@@ -1,8 +1,6 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
@@ -16,6 +14,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,7 @@ import android.view.ViewManager;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,8 +38,12 @@ public class CreepMapActivity extends Activity {
 	private Location location;
 	private LatLngBounds.Builder builder;
 	static CreepMapActivity thisActivity;
-	private Timer mapTimer;
+	private GoogleMap map;
+	private CheckBox zoomCheck;
+	private final int timeInterval = 5000; // location update delay, milliseconds
+	private Handler timerHandler;
 
+	/* Returns current map activity instance for external control */
 	public static CreepMapActivity getInstance() {
 		return thisActivity;
 	}
@@ -53,8 +57,14 @@ public class CreepMapActivity extends Activity {
 		// Initialize map builder
 		builder = new LatLngBounds.Builder();
 
+		// Set check box
+		zoomCheck = (CheckBox) this.findViewById(R.id.zoomCheckBox);
+
+		// Initialize timer handler
+		this.timerHandler = new Handler();
+
 		// Get a handle to the Map Fragment
-		final GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(
+		map = ((MapFragment) getFragmentManager().findFragmentById(
 		    R.id.creep_mapFragment)).getMap();
 		map.setMyLocationEnabled(true);
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -78,18 +88,26 @@ public class CreepMapActivity extends Activity {
 				// Get the creep
 				Creep c = MainActivity.sLab.getCreep(victimsList.get(i));
 
-				// Update header TextView with name of creep
-				if (i != 0) {
-					nameTextView.setText(nameTextView.getText() + ", " + c.getName());
+				// Check if creep has a location
+				if (c.getLatitude() == null) {
+					victimsList.remove(i);
+					i--;
+					Toast.makeText(this, "No location available for " + c.getName(),
+					    Toast.LENGTH_LONG).show();
 				} else {
-					nameTextView.setText(c.getName());
+					// Update header TextView with name of creep
+					if (i != 0) {
+						nameTextView.setText(nameTextView.getText() + ", " + c.getName());
+					} else {
+						nameTextView.setText(c.getName());
+					}
 				}
 			}
 
 			// Update all creep locations on map
 			updateLocations(map);
 
-			// If more than one person is being mapped, remove Get Directions button
+			// If other than one person is being mapped, remove Get Directions button
 			if (victimsList.size() != 1) {
 				View v = findViewById(R.id.directionsButton);
 				((ViewManager) v.getParent()).removeView(v);
@@ -97,9 +115,6 @@ public class CreepMapActivity extends Activity {
 
 			// Zoom in on the defined bounds
 			zoomInOnCreeps(map);
-
-			// Start update timer
-			implementLocationTimer(map, this.findViewById(R.id.zoomCheckBox));
 		}
 
 		// Display home as up in Activity Bar
@@ -159,7 +174,6 @@ public class CreepMapActivity extends Activity {
 
 			/* START TEMPORARY TEST CODE - MOVES DUMMY CREEPS ON EACH UPDATE */
 			c.setLatitude(c.getLatitude() + .001);
-			c.setLongitude(c.getLongitude() + .001);
 			/* END TEMPORARY TEST CODE - MOVES DUMMY CREEPS ON EACH UPDATE */
 
 			// Get creep location
@@ -189,72 +203,51 @@ public class CreepMapActivity extends Activity {
 		}
 	}
 
-	/* Deals with Activity Bar and Menu item selections */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			if (NavUtils.getParentActivityName(this) != null) {
-				NavUtils.navigateUpFromSameTask(this);
-			}
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	// Action taken on Get Directions button click
+	/* Action taken on Get Directions button click */
 	public void getDirections(View v) {
 		if (this.dirPoints != "") {
 			Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
 			    Uri.parse(this.dirPoints));
 			startActivity(intent);
 		}
-
 	}
 
-	// Implements timer to get updated creep location data
-	private void implementLocationTimer(final GoogleMap map, final View checkBox) {
-		// Timer counts down every 1 second
-		mapTimer = new Timer();
-		mapTimer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						/*
-						 * get GPS data on mapped creeps from server. if GPS status has
-						 * changed, update creep location data.
-						 */
+	/* Implements timer to get updated creep location data */
+	Runnable locationUpdater = new Runnable() {
+		@Override
+		public void run() {
+			/*
+			 * get GPS data on mapped creeps from server. if GPS status has changed,
+			 * update creep location data.
+			 */
 
-						// Updates location on map
-						updateLocations(map);
+			// Updates location on map
+			updateLocations(map);
 
-						// Re-zooms map if box is checked
-						CheckBox zoomCheck = (CheckBox) checkBox;
-						if (zoomCheck.isChecked()) {
-							zoomInOnCreeps(map);
-						}
-					}
-				});
-				}
-		}, 0, 1000);
-	}
+			// Re-zooms map if box is checked
+			if (zoomCheck.isChecked()) {
+				zoomInOnCreeps(map);
+			}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		// Check for GPS enabled on resume
-		final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-			buildAlertMessageNoGps();
+			timerHandler.postDelayed(locationUpdater, timeInterval);
 		}
+	};
+
+	/* Starts location update timer */
+	private void startTimer() {
+		locationUpdater.run();
 	}
 
+	/* Stops location update timer */
+	private void stopTimer() {
+		this.timerHandler.removeCallbacks(locationUpdater);
+	}
+
+	/* Builds GPS not enabled alert message and provides option to re-enable */
 	private void buildAlertMessageNoGps() {
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		// Alert dialog blocks activity from running and querying for location
+		// updates, allows user to go direct to enable screen
 		builder
 		    .setMessage("Your GPS seems to be disabled, do you want to enable it?")
 		    .setCancelable(false)
@@ -268,6 +261,7 @@ public class CreepMapActivity extends Activity {
 			    @Override
 			    public void onClick(final DialogInterface dialog, final int id) {
 				    dialog.cancel();
+				    // Exit from map activity
 				    finish();
 			    }
 		    });
@@ -275,9 +269,41 @@ public class CreepMapActivity extends Activity {
 		alert.show();
 	}
 
+	/* Action taken when activity is resumed */
 	@Override
-	protected void onStop() {
-		super.onStop();
-		mapTimer.cancel();
+	protected void onResume() {
+		super.onResume();
+		// Check for GPS enabled
+		final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		// If GPS is not enabled...
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			// Build alert message, which blocks location updates as well
+			buildAlertMessageNoGps();
+		}
+
+		// Location update timer restarted
+		startTimer();
+	}
+
+	/* Action taken when activity is paused or destroyed */
+	@Override
+	protected void onPause() {
+		stopTimer();
+		super.onPause();
+	}
+
+	/* Deals with Activity Bar and Menu item selections */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			if (NavUtils.getParentActivityName(this) != null) {
+				NavUtils.navigateUpFromSameTask(this);
+			}
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
