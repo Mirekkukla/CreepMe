@@ -137,10 +137,10 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 		// Set GPS enabled ImageView
 		if(current.gpsEnabled()) {
 			// Their GPS is enabled
-			holder.gps.setImageResource(R.drawable.gps_check);
+			holder.gps.setImageResource(R.drawable.gps_check_dark);
 		} else {
 			// Their GPS is not enabled
-			holder.gps.setImageResource(R.drawable.gps_x);
+			holder.gps.setImageResource(R.drawable.gps_x_dark);
 		}
 
 		return convertView;
