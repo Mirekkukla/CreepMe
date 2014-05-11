@@ -1,6 +1,8 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -10,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +27,7 @@ public class MainActivity extends Activity {
 	public static String sPhoneNumber;
 	private CreepListAdapter adp1;
 	private CreepListAdapter adp2;
-	private CountDownTimer mainTimer;
+	private Timer mainTimer;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,8 +77,7 @@ public class MainActivity extends Activity {
 			CreepMapActivity.getInstance().finish();
 		}
 
-		// Restart main timer
-		mainTimer.start();
+		implementListViewTimer();
 	}
 
 	@Override
@@ -160,29 +160,22 @@ public class MainActivity extends Activity {
 	}
 
 	// Starts a timer to update timers every second
-	public void implementListViewTimer() {
-		// Timer counts down every 60 seconds, by 1 second intervals
-		mainTimer = new CountDownTimer(60000, 1500) {
+	private void implementListViewTimer() {
+		// Timer counts down every second
+		mainTimer = new Timer();
+		mainTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
-			public void onTick(long millisUntilFinished) {
-				sLab.checkForCompletions();
-				adp1.notifyDataSetChanged();
-				adp2.notifyDataSetChanged();
+			public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						sLab.checkForCompletions();
+						adp1.notifyDataSetChanged();
+						adp2.notifyDataSetChanged();
+					}
+				});
 			}
-
-			@Override
-			public void onFinish() {
-				/*
-				 * On timer finish, get GPS data on active creeps from server. if GPS
-				 * status has changed, update GPS icon. If location has changed, update
-				 * creep location data
-				 */
-
-				// Restarts
-				implementListViewTimer();
-			}
-
-		}.start();
+		}, 0, 1000);
 	}
 
 	private void buildAlertMessageNoGps() {

@@ -1,6 +1,8 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
@@ -14,7 +16,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,7 +38,7 @@ public class CreepMapActivity extends Activity {
 	private Location location;
 	private LatLngBounds.Builder builder;
 	static CreepMapActivity thisActivity;
-	public CountDownTimer timer;
+	private Timer mapTimer;
 
 	public static CreepMapActivity getInstance() {
 		return thisActivity;
@@ -213,34 +214,32 @@ public class CreepMapActivity extends Activity {
 	}
 
 	// Implements timer to get updated creep location data
-	public void implementLocationTimer(final GoogleMap map, final View checkBox) {
-		// Timer counts down every 5 seconds, by 1 second intervals
-		timer = new CountDownTimer(5000, 1000) {
+	private void implementLocationTimer(final GoogleMap map, final View checkBox) {
+		// Timer counts down every 1 second
+		mapTimer = new Timer();
+		mapTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
-			public void onTick(long millisUntilFinished) {
-				// Each second
-			}
+			public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						/*
+						 * get GPS data on mapped creeps from server. if GPS status has
+						 * changed, update creep location data.
+						 */
 
-			@Override
-			public void onFinish() {
-				/*
-				 * On timer finish, get GPS data on mapped creeps from server. if GPS
-				 * status has changed, update creep location data.
-				 */
+						// Updates location on map
+						updateLocations(map);
 
-				// Updates location on map
-				updateLocations(map);
-
-				// Re-zooms map if box is checked
-				CheckBox zoomCheck = (CheckBox) checkBox;
-				if (zoomCheck.isChecked()) {
-					zoomInOnCreeps(map);
+						// Re-zooms map if box is checked
+						CheckBox zoomCheck = (CheckBox) checkBox;
+						if (zoomCheck.isChecked()) {
+							zoomInOnCreeps(map);
+						}
+					}
+				});
 				}
-
-				// Restarts
-				implementLocationTimer(map, checkBox);
-			}
-		}.start();
+		}, 0, 1000);
 	}
 
 	@Override
@@ -252,9 +251,6 @@ public class CreepMapActivity extends Activity {
 		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			buildAlertMessageNoGps();
 		}
-
-		// Restart timer
-		timer.start();
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -280,14 +276,8 @@ public class CreepMapActivity extends Activity {
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-		timer.cancel();
-	}
-
-	@Override
 	protected void onStop() {
 		super.onStop();
-		timer.cancel();
+		mapTimer.cancel();
 	}
 }
