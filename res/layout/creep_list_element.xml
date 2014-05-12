@@ -17,8 +17,7 @@
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="5dp"
-        android:contentDescription="@string/profile_pic_description"
-        android:src="@drawable/ic_launcher" />
+        android:contentDescription="@string/profile_pic_description" />
 
     <TextView
         android:id="@+id/friend_nameText"

@@ -16,7 +16,7 @@ public class CreepLab {
 		this.creepsByYou = new ArrayList<Creep>();
 		this.creepsOnYou = new ArrayList<Creep>();
 		// Temporary list population for testing
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 7; i++) {
 			Date now = new Date();
 			Creep c = new Creep();
 			c.setTimeMade(now.getTime());
@@ -36,7 +36,7 @@ public class CreepLab {
 			c.setIsComplete(false);
 			this.creepsByYou.add(c);
 		}
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < 2; i++) {
 			Date now = new Date();
 			Creep c = new Creep();
 			c.setTimeMade(now.getTime());
@@ -107,6 +107,9 @@ public class CreepLab {
 		} else if (!c.isByYou()) {
 			this.creepsOnYou.remove(this.creepsOnYou.indexOf(c));
 		}
+		/**
+		 * Notify server creep was removed
+		 */
 	}
 
 	/* Removes all selected creeps from their lists */
@@ -115,14 +118,14 @@ public class CreepLab {
 		// Remove all checked creeps
 		for (int i = 0; i < this.creepsOnYou.size(); i++) {
 			if (this.creepsOnYou.get(i).getIsChecked()) {
-				this.creepsOnYou.remove(i);
+				removeCreep(this.creepsOnYou.get(i));
 				removed = true;
 				i--; // Because an element was just removed
 			}
 		}
 		for (int i = 0; i < this.creepsByYou.size(); i++) {
 			if (this.creepsByYou.get(i).getIsChecked()) {
-				this.creepsByYou.remove(i);
+				removeCreep(this.creepsByYou.get(i));
 				removed = true;
 				i--; // Because an element was just removed
 			}

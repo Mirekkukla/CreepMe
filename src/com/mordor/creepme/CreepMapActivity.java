@@ -40,7 +40,7 @@ public class CreepMapActivity extends Activity {
 	static CreepMapActivity thisActivity;
 	private GoogleMap map;
 	private CheckBox zoomCheck;
-	private final int timeInterval = 5000; // location update delay, milliseconds
+	private final int timeInterval = 15000; // location update delay, milliseconds
 	private Handler timerHandler;
 
 	/* Returns current map activity instance for external control */
@@ -80,6 +80,10 @@ public class CreepMapActivity extends Activity {
 			// Don't know why I have to do this, but using victimsList 3 lines up
 			// doesn't work
 			victimsList = list;
+
+			/**
+			 * Query for location of mapped creeps. Wait for confirmed response.
+			 */
 
 			// Initialize header text
 			TextView nameTextView = (TextView) findViewById(R.id.map_infoText);
@@ -216,9 +220,10 @@ public class CreepMapActivity extends Activity {
 	Runnable locationUpdater = new Runnable() {
 		@Override
 		public void run() {
-			/*
-			 * get GPS data on mapped creeps from server. if GPS status has changed,
-			 * update creep location data.
+			/**
+			 * Send request for GPS data on mapped creeps from server. if GPS status
+			 * has changed, update creep location data. If their GPS is no longer
+			 * enabled, notify and use last known location (change marker color).
 			 */
 
 			// Updates location on map

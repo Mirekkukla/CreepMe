@@ -28,6 +28,8 @@ public class MainActivity extends Activity {
 	private CreepListAdapter adp2;
 	private Handler timerHandler;
 	private final int timeInterval = 1000; // Update interval, milliseconds
+	public int refreshInterval; // Creep info refresh, milliseconds
+	private int refreshTime;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class MainActivity extends Activity {
 
 		// Initialize timer handler
 		this.timerHandler = new Handler();
+		refreshTime = 0;
+		refreshInterval = 60; // Will come from settings page
 
 		// Define ListViews locally, linked to layout
 		ListView lv1 = (ListView) findViewById(R.id.who_you_creepingList);
@@ -116,6 +120,23 @@ public class MainActivity extends Activity {
 		@Override
 		public void run() {
 			sLab.checkForCompletions();
+
+			// Check whether to refresh UI
+			if (refreshTime == 0 || refreshTime == refreshInterval) {
+				if (refreshTime == 0) {
+					// Refresh UI on 0
+					/**
+					 * query for gps enabled/not enabled on all creeps
+					 */
+				}
+				if (refreshTime == refreshInterval) {
+					// Reached refresh interval - reset
+					refreshTime = -1;
+				}
+			}
+			refreshTime++;
+
+			// Update UI
 			adp1.notifyDataSetChanged();
 			adp2.notifyDataSetChanged();
 

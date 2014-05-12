@@ -136,11 +136,12 @@ public class FriendSelectorFragment extends Fragment implements
 				getActivity().startActivity(i);
 				/**
 				 * query database - if phone number has app, send request, acknowledge
-				 * request sent, and return to main.
+				 * request sent, and return to main. Request includes: phone number,
+				 * requested duration
 				 *
 				 * if phone number does not have app, ask if they want to send a text
 				 * inviting them. If yes, send text, store pending request for set
-				 * amount of time, and
+				 * amount of time, and return to main.
 				 */
 			}
 		});

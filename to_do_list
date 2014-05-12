@@ -1,15 +1,21 @@
 CreepMe to-do list
 =======
 
+Scale 1-10, 1 being don't worry that shit can wait forever, 10 being holy crap my phone lights on fire when we try to run it because of this.
+Use 7 and below for anything not required to run the program.
+
+PHONE-SIDE
 - Make custom adapter to show phone number in autocomplete 
 listview element, as well as name. Right now the stock ArrayAdapter<String> 
 can only fill the top textview and every time I get the bottom 
-one to fill, the autocomplete stops working.
+one to fill, the autocomplete stops working. (6)
 
-- get profile pic from contact
+- get profile pic from contact (6)
 
-- add circular crop to profile pictures
+- add circular crop to profile pictures (2)
 
-- Rearrange items in a listview by drag and drop
+- Rearrange items in a listview by drag and drop (4)
 
-- Build Settings page
+- Build Settings page (3)
+
+- Send queries to server (waiting on server) (9)
