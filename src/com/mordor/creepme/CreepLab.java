@@ -2,6 +2,7 @@ package com.mordor.creepme;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 import android.content.Context;
@@ -16,7 +17,10 @@ public class CreepLab {
 		this.creepsByYou = new ArrayList<Creep>();
 		this.creepsOnYou = new ArrayList<Creep>();
 		// Temporary list population for testing
-		for (int i = 0; i < 7; i++) {
+		Random randomGenerator = new Random();
+		int by = randomGenerator.nextInt(8);
+		int on = randomGenerator.nextInt(8);
+		for (int i = 0; i < by; i++) {
 			Date now = new Date();
 			Creep c = new Creep();
 			c.setTimeMade(now.getTime());
@@ -36,7 +40,7 @@ public class CreepLab {
 			c.setIsComplete(false);
 			this.creepsByYou.add(c);
 		}
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < on; i++) {
 			Date now = new Date();
 			Creep c = new Creep();
 			c.setTimeMade(now.getTime());

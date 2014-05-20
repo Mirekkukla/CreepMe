@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,6 +16,8 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,6 +53,11 @@ public class FriendSelectorFragment extends Fragment implements
 	private EditText mins;
 	private TextView nameTextView;
 	private ImageView profileImageView;
+
+	// Initialize notification variables
+	private NotificationManager myNotificationManager;
+	private final int notificationId = 111;
+	private int numMessages = 0;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent,
@@ -130,10 +140,6 @@ public class FriendSelectorFragment extends Fragment implements
 					return;
 				}
 
-				MainActivity.sLab.addCreep(creep);
-
-				Intent i = new Intent(getActivity(), MainActivity.class);
-				getActivity().startActivity(i);
 				/**
 				 * query database - if phone number has app, send request, acknowledge
 				 * request sent, and return to main. Request includes: phone number,
@@ -143,6 +149,11 @@ public class FriendSelectorFragment extends Fragment implements
 				 * inviting them. If yes, send text, store pending request for set
 				 * amount of time, and return to main.
 				 */
+
+				displayNotification();
+
+				Intent i = new Intent(getActivity(), MainActivity.class);
+				getActivity().startActivity(i);
 			}
 		});
 
@@ -286,4 +297,44 @@ public class FriendSelectorFragment extends Fragment implements
 			return super.onOptionsItemSelected(item);
 		}
 	}
+
+	protected void displayNotification() {
+		// Invoking the default notification service
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+		    this.getActivity());
+		mBuilder.setContentTitle("New Creep Request");
+		mBuilder.setContentText("Creep Request From Yourself");
+		mBuilder.setTicker("Explicit: New Creep Received!");
+		mBuilder.setSmallIcon(R.drawable.ic_launcher);
+		mBuilder.setAutoCancel(true);
+
+		// Increase notification number every time a new notification arrives
+		mBuilder.setNumber(numMessages++);
+
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(this.getActivity(), MainActivity.class);
+		resultIntent.putExtra("notificationId", notificationId);
+
+		// This ensures that navigating backward from the Activity leads out of the
+		// app to Home page
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getActivity());
+
+		// Adds the back stack for the Intent
+		stackBuilder.addParentStack(MainActivity.class);
+
+		// Adds the Intent that starts the Activity to the top of the stack
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0,
+		    PendingIntent.FLAG_ONE_SHOT // can only be used once
+		    );
+
+		// start the activity when the user clicks the notification text
+		mBuilder.setContentIntent(resultPendingIntent);
+		myNotificationManager = (NotificationManager) this.getActivity()
+		    .getSystemService(Context.NOTIFICATION_SERVICE);
+
+		// pass the Notification object to the system
+		myNotificationManager.notify(notificationId, mBuilder.build());
+	}
+
 }
