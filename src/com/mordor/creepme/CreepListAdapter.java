@@ -18,6 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.mordor.creepme.R;
 
 public class CreepListAdapter extends ArrayAdapter<Creep> {
 	private final Context context;
@@ -73,14 +76,18 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 					buildAlertMessageNoGps();
 					return;
 				}
-
-				ArrayList<UUID> victim = new ArrayList<UUID>();
-				victim.add(current.getId());
-				Intent i = new Intent(context, CreepMapActivity.class);
-				i.putExtra("victimsList", victim);
-				context.startActivity(i);
+				if(current.getIsStarted() == true) {
+					// Open map with creep location
+					ArrayList<UUID> victim = new ArrayList<UUID>();
+					victim.add(current.getId());
+					Intent i = new Intent(context, CreepMapActivity.class);
+					i.putExtra("victimsList", victim);
+					context.startActivity(i);
+				} else {
+					Toast.makeText(context, "Pending Creeps cannot be mapped", Toast.LENGTH_SHORT).show();
+					return;
+				}
 			}
-
 		});
 
 		// Handle CheckBox actions, states
@@ -104,38 +111,36 @@ public class CreepListAdapter extends ArrayAdapter<Creep> {
 
 		// Update time remaining TextView
 		this.tv = holder.timeLeft;
-		Date currT = new Date();
-		if (!current.getIsStarted()) {
-			current.setIsStarted(true);
-			current.setTimeStarted(currT.getTime());
-		}
-		if (this.tv != null) {
-			long millisToFinish = current.getFollowTime()
-			    - (currT.getTime() - current.getTimeStarted());
-			if (millisToFinish > 0) {
-				// Convert millisToFinish to readable string
-				int sec = (int) (millisToFinish / 1000) % 60;
-				int min = (int) ((millisToFinish / (1000 * 60)) % 60);
-				int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
-				String seconds = Integer.toString(sec);
-				String minutes = Integer.toString(min);
-				String hours = Integer.toString(hr);
-				if (seconds.length() < 2)
-					seconds = "0" + seconds;
-				if (minutes.length() < 2)
-					minutes = "0" + minutes;
 
-				String text = (hours + ":" + minutes + ":" + seconds);
-				this.tv.setText(text);
-			} else {
-				// Creep is complete
-				current.setIsComplete(true);
-				this.tv.setText("--:--:--");
+		if (this.tv != null) {
+			String text = "pending";
+			long millisToFinish = current.getTimeRemaining();
+			if(current.getIsStarted() == true) {
+				if (millisToFinish > 0) {
+					// Convert millisToFinish to readable string
+					int sec = (int) (millisToFinish / 1000) % 60;
+					int min = (int) ((millisToFinish / (1000 * 60)) % 60);
+					int hr = (int) ((millisToFinish / (1000 * 60 * 60)) % 24);
+					String seconds = Integer.toString(sec);
+					String minutes = Integer.toString(min);
+					String hours = Integer.toString(hr);
+					if (seconds.length() < 2)
+						seconds = "0" + seconds;
+					if (minutes.length() < 2)
+						minutes = "0" + minutes;
+	
+					text = (hours + ":" + minutes + ":" + seconds);
+				} else {
+					// Creep is complete
+					current.setIsComplete(true);
+					text = "--:--:--";
+				}
 			}
+			this.tv.setText(text);
 		}
 
 		// Set GPS enabled ImageView
-		if(current.gpsEnabled()) {
+		if (current.gpsEnabled()) {
 			// Their GPS is enabled
 			holder.gps.setImageResource(R.drawable.gps_check_dark);
 		} else {

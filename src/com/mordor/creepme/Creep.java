@@ -9,7 +9,7 @@ public class Creep {
 	private String name;
 	private String number;
 	private Bitmap profilePic;
-	private long followTime;
+	private long duration;
 	private long timeRemaining;
 	private final UUID id;
 	private long timeMade;
@@ -21,13 +21,22 @@ public class Creep {
 	private Boolean gpsEnabled;
 	private Double latitude;
 	private Double longitude;
+	private String cloudId;
 
 	/* Initializes UUID when creating a new Creep */
 	public Creep() {
 		this.id = UUID.randomUUID();
 	}
 
-	public Boolean isByYou() {
+	public void setCloudId(String ce) {
+	  this.cloudId = ce;
+	}
+	
+	public String getCloudId() {
+	  return this.cloudId;
+	}
+	
+	public Boolean getIsByYou() {
 		return this.isByYou;
 	}
 
@@ -51,18 +60,18 @@ public class Creep {
 		this.number = number;
 	}
 
-	public long getFollowTime() {
-		return this.followTime;
+	public long getDuration() {
+		return this.duration;
 	}
 
-	public void setFollowTime(long time) {
-		this.followTime = time;
+	public void setDuration(long time) {
+		this.duration = time;
 	}
 
 	/* Returns time remaining in milliseconds */
 	public long getTimeRemaining() {
 		Date now = new Date();
-		this.timeRemaining = now.getTime() - this.timeStarted;
+		this.timeRemaining = this.getDuration() - (now.getTime() - this.timeStarted);
 		return this.timeRemaining;
 	}
 

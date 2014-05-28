@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mordor.creepme.R;
 
 public class CreepMapActivity extends Activity {
 	private String dirPoints;
@@ -185,7 +186,7 @@ public class CreepMapActivity extends Activity {
 
 			// Add marker that shows victim's status and name when you click on it
 			String creepTag;
-			if (!c.isByYou()) {
+			if (!c.getIsByYou()) {
 				creepTag = "Creeper";
 				map.addMarker(new MarkerOptions()
 				    .title(c.getName())
@@ -302,13 +303,13 @@ public class CreepMapActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			if (NavUtils.getParentActivityName(this) != null) {
-				NavUtils.navigateUpFromSameTask(this);
-			}
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case android.R.id.home:
+				if (NavUtils.getParentActivityName(this) != null) {
+					NavUtils.navigateUpFromSameTask(this);
+				}
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 }

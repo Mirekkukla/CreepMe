@@ -1,0 +1,40 @@
+# view AndroidManifest.xml #generated:76
+-keep class com.google.android.gcm.GCMBroadcastReceiver { <init>(...); }
+
+# view res/layout/fragment_map.xml #generated:24
+-keep class com.google.android.gms.maps.MapFragment { <init>(...); }
+
+# view AndroidManifest.xml #generated:58
+-keep class com.mordor.creepme.CreepMapActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:50
+-keep class com.mordor.creepme.FriendSelectorActivity { <init>(...); }
+
+# view AndroidManifest.xml #generated:74
+# view AndroidManifest.xml #generated:84
+-keep class com.mordor.creepme.GCMIntentService { <init>(...); }
+
+# view AndroidManifest.xml #generated:66
+-keep class com.mordor.creepme.LocationReceiver { <init>(...); }
+
+# view AndroidManifest.xml #generated:43
+-keep class com.mordor.creepme.MainActivity { <init>(...); }
+
+# onClick res/layout/activity_main.xml #generated:62
+-keepclassmembers class * { *** cancelSelections(...); }
+
+# onClick res/layout/activity_main.xml #generated:87
+-keepclassmembers class * { *** eraseCloud(...); }
+
+# onClick res/layout/fragment_map.xml #generated:31
+-keepclassmembers class * { *** getDirections(...); }
+
+# onClick res/layout/activity_main.xml #generated:78
+-keepclassmembers class * { *** mapSelections(...); }
+
+# onClick res/layout/activity_main.xml #generated:70
+-keepclassmembers class * { *** newFriendSelector(...); }
+
+# onClick res/layout/activity_friend_selector.xml #generated:92
+-keepclassmembers class * { *** sendCreep(...); }
+
