@@ -1,7 +1,6 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +53,8 @@ public class FriendSelectorActivity extends Activity implements OnItemClickListe
 
     // Display home as up
     this.getActionBar().setDisplayHomeAsUpEnabled(true);
+    
+    // Initialize new Creep
     this.creep = new Creep();
 
     // Initialize AutoCompleteTextView values
@@ -168,17 +169,13 @@ public class FriendSelectorActivity extends Activity implements OnItemClickListe
 
   /* Action taken when an auto-complete list item is clicked */
   @Override
-  public void onItemClick(
-      AdapterView<?> adapterView,
-      View view, int pos, long arg3) {
+  public void onItemClick(AdapterView<?> adapterView, View view, int pos, long arg3) {
     // Get Array index value for selected name
     String name = adapterView.getItemAtPosition(pos).toString();
     Contact contact = contactMap.get(name);
 
     // Format phone number to 10-digit
-    this.creep
-        .setNumber(formatNumber(contact
-            .getNumber()));
+    this.creep.setNumber(formatNumber(contact.getNumber()));
     if (this.creep.getNumber() == null) {
       contact = null;
     }
@@ -252,27 +249,13 @@ public class FriendSelectorActivity extends Activity implements OnItemClickListe
   /* Action taken on Creep Them button click */
   public void sendCreep(View v) {
     // Set follow time, milliseconds
-    creep
-        .setDuration(parseFollowTime());
-
-    // Set time made, milliseconds
-    Date currDate = new Date();
-    creep.setTimeMade(currDate.getTime());
-
-    // Default to unchecked
-    creep.setIsChecked(false);
+    creep.setDuration(parseFollowTime());
 
     // You're the creeper
     creep.setIsByYou(true);
-
-    // Creep has not yet started
+    
+    // TODO just for debugging
     creep.setIsStarted(true);
-    Date now = new Date();
-    creep.setTimeStarted((Long) now.getTime());
-    creep.setIsComplete(false);
-
-    // Set GPS default to not enabled
-    creep.setGpsEnabled(false);
 
     if (creep.getName() == null) {
       Toast.makeText(this,"Gotta choose creep victim first!", 

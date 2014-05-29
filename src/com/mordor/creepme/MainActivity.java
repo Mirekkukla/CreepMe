@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,21 +30,34 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.cloud.backend.core.CloudBackendActivity;
+import com.google.cloud.backend.core.CloudBackendMessaging;
 import com.google.cloud.backend.core.CloudCallbackHandler;
 import com.google.cloud.backend.core.CloudEntity;
 import com.google.cloud.backend.core.CloudQuery;
 import com.google.cloud.backend.core.CloudQuery.Scope;
 import com.google.cloud.backend.core.Filter;
 
-public class MainActivity extends
-    CloudBackendActivity {
+public class MainActivity extends CloudBackendActivity {
+  
+  /** CONSTANTS */
+  /*UI update interval, milliseconds */
+  private final int UPDATE_TIME_INTERVAL = 1000;
+  /* Location update interval, milliseconds */
+  private final int LOCATION_UPDATE_INTERVAL = 30000;
+  /* Max location update interval allowed for up-to-date, milliseconds */
+  private final int LOCATION_MAX_INTERVAL = LOCATION_UPDATE_INTERVAL * (11 / 10);
+  /* MainActivity Log TAG */
   private static final String TAG = "com.mordor.creepme.MainActivity";
+  
+  /** MainActivity global variables */
   public static CreepLab sLab;
   public static String sPhoneNumber;
+  
+  /** MainActivity local variables */
   private CreepListAdapter adp1;
   private CreepListAdapter adp2;
   private Handler timerHandler;
-  private final int timeInterval = 1000; // Update interval, milliseconds
+  private int timeSinceLastUpdate;
   private Map<String, Contact> contactMap;
 
   @Override
@@ -52,11 +67,12 @@ public class MainActivity extends
 
     // Initialize contactMap
     contactMap = new HashMap<String, Contact>();
+    timeSinceLastUpdate = 0;
 
     // Get user's phone number
     TelephonyManager telManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
     sPhoneNumber = telManager.getLine1Number();
-    // sPhoneNumber = "3076904811"; // Can change your number for testing
+    //sPhoneNumber = "3076904811"; // TODO Can change your number for testing
 
     // Get contact data
     readContactData();
@@ -66,7 +82,7 @@ public class MainActivity extends
       sLab = CreepLab.get(this);
 
       // Retrieve Creeps from Cloud
-      getCloudCreeps();
+      getCloudCreeps();      
     }
 
     // Initialize timer handler
@@ -108,11 +124,7 @@ public class MainActivity extends
             c.setNumber((String) ce.get("victim"));
             c.setIsStarted((Boolean) ce.get("is_started"));
             c.setTimeStarted(Long.parseLong(((String) ce.get("time_started"))));
-            c.setIsChecked(false);
-            c.setGpsEnabled(false);
             c.setCloudId((String) ce.get("creep_uuid"));
-
-            // TODO Subscribe to location updates from other number
 
             if (c.getTimeRemaining() > 0) {
               // Creep is still valid
@@ -136,7 +148,7 @@ public class MainActivity extends
             } else {
               // Creep has timed out - remove it
               Log.i("Comments", "Removing timed-out creep");
-              deleteFromCloud(c);
+              deleteCreepFromCloud(c);
             }
           }
         } else {
@@ -203,16 +215,15 @@ public class MainActivity extends
     for (int i = 0; i < sb.length(); i++) {
       if (!Character.isDigit(sb.charAt(i))) {
         sb.deleteCharAt(i);
-        if(i != 0) i--;
+        i--;
       }
     }
     
     // Remove 0's or 1's from the beginning of the number
     for (int i = 0; i < sb.length(); i++) {
-      if (sb.charAt(i) == '0'
-          || sb.charAt(i) == '1') {
+      if (sb.charAt(i) == '0' || sb.charAt(i) == '1') {
         sb.deleteCharAt(i);
-        if(i != 0) i--;;
+        i--;
       } else {
         break;
       }
@@ -238,24 +249,32 @@ public class MainActivity extends
   public void cancelSelections(View v) {
     try {
       Boolean removed = false;
-      for (int i = 0; i < sLab.creepsOnYou.size(); i++) {
-        if (sLab.creepsOnYou.get(i).getIsChecked()) {
-          // Remove from both local list and Cloud
-          sLab.removeCreep(sLab.creepsOnYou.get(i));
-          removed = true;
-          if(i != 0) i--;
-        }
-      }
+      List<Creep> list = new ArrayList<Creep>();
       for (int i = 0; i < sLab.creepsByYou.size(); i++) {
-        if (sLab.creepsByYou.get(i).getIsChecked()) {
-          sLab.removeCreep(sLab.creepsByYou.get(i));
+        Creep c = sLab.creepsByYou.get(i);
+        if (c.getIsChecked()) {
+          // Remove from both local list and Cloud
+          list.add(c);
+          deleteCreepFromCloud(c);
+          sLab.removeCreep(c);
           removed = true;
-          if(i != 0) i--;
+          i--;
         }
       }
-
-      // If nothing gets removed, nothing was selected
-      if (!removed) {
+      for (int i = 0; i < sLab.creepsOnYou.size(); i++) {
+        Creep c = sLab.creepsOnYou.get(i);
+        if (c.getIsChecked()) {
+          // Remove from both local list and Cloud
+          list.add(c);
+          deleteCreepFromCloud(c);
+          sLab.removeCreep(c);
+          removed = true;
+          i--;
+        }
+      }
+      if(removed) {
+        unsubscribeFromLocationUpdates(list);
+      } else {
         Toast.makeText(this, "Nothing selected", Toast.LENGTH_SHORT).show();
       }
     } catch (Exception e) {
@@ -283,7 +302,7 @@ public class MainActivity extends
         for (int i = 0; i < selections.size(); i++) {
           if (sLab.getCreep(selections.get(i)).getIsStarted() == false) {
             selections.remove(i);
-            if(i != 0) i--;
+            i--;
           }
         }
         if (selections.size() == 0) {
@@ -304,14 +323,43 @@ public class MainActivity extends
 
   /* Implements timer to update listView elements */
   Runnable listViewUpdater = new Runnable() {
+    // Update UI
     @Override
     public void run() {
-      // Update UI
-      sLab.checkForCompletions();     
+      // Subscribe to location updates from any new creeps
+      for(int i = 0; i < sLab.getCreeps(true).size(); i++) {
+        Creep c = sLab.getCreeps(true).get(i);
+        if(c.getIsStarted() && !c.getIsSubscribed()) {
+          subscribeToLocationUpdates(c.getNumber());
+        }
+      }
+      for(int i = 0; i < sLab.getCreeps(false).size(); i++) {
+        Creep c = sLab.getCreeps(false).get(i);
+        if(c.getIsStarted() && !c.getIsSubscribed()) {
+          subscribeToLocationUpdates(c.getNumber());
+        }
+      }
+      // Remove any completed creeps
+      sLab.checkForCompletions();  
+      
+      // 
+      if(timeSinceLastUpdate >= LOCATION_UPDATE_INTERVAL) {
+        if(!sLab.isEmpty()) {
+          publishLocationUpdate();
+        }
+        timeSinceLastUpdate = 0;
+      } else {
+        timeSinceLastUpdate = timeSinceLastUpdate + 1000;
+      }
+      
+      // Unsubscribe from any deleted creeps, reset list
+      unsubscribeFromLocationUpdates(sLab.getDeletedCreepsList());
+      sLab.clearDeletedCreepsList();
+      
       adp1.notifyDataSetChanged();
       adp2.notifyDataSetChanged();
 
-      timerHandler.postDelayed(listViewUpdater, timeInterval);
+      timerHandler.postDelayed(listViewUpdater, UPDATE_TIME_INTERVAL);
     }
   };
 
@@ -323,55 +371,6 @@ public class MainActivity extends
   /* Stops listView update timer */
   private void stopTimer() {
     this.timerHandler.removeCallbacks(listViewUpdater);
-  }
-
-  /* Builds GPS not enabled alert message and provides option to re-enable */
-  private void buildAlertMessageNoGps() {
-    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    // Alert dialog blocks activity from running and opening map
-    builder
-        .setMessage("Your GPS seems to be disabled, do you want to enable it?")
-        .setCancelable(false)
-        .setPositiveButton(
-            "Yes",
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(final DialogInterface dialog, final int id) {
-                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-              }
-            })
-        .setNegativeButton(
-            "No", 
-            new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(final DialogInterface dialog, final int id) {
-                dialog.cancel();
-              }
-            });
-    final AlertDialog alert = builder.create();
-    alert.show();
-  }
-
-  /* Action taken when activity is resumed */
-  @Override
-  public void onResume() {
-    super.onResume();
-    if (getIntent().getExtras() != null) {
-      if (((String) getIntent().getExtras().get("source")).equals("FriendSelectorActivity")) {
-        addCreepToCloud(sLab.getCreep((UUID)getIntent().getExtras().get("uuid")));
-      }
-    }
-    // Update lists on activity resume
-    this.adp1.notifyDataSetChanged();
-    this.adp2.notifyDataSetChanged();
-
-    // If there's an instance of CreepMapActivity open, kill it
-    if (CreepMapActivity.getInstance() != null) {
-      CreepMapActivity.getInstance().finish();
-    }
-
-    // ListView update timer (re)started
-    startTimer();
   }
 
   /* Adds a locally-created creep to the cloud */
@@ -404,12 +403,197 @@ public class MainActivity extends
     ce.put("creep_uuid", UUID.randomUUID().toString());
     getCloudBackend().insert(ce, handler);
   }
+  
+  /* Deletes a creep from the cloud */
+  public void deleteCreepFromCloud(Creep c) {
+    // Create a response handler that will receive the result or an error
+    CloudCallbackHandler<List<CloudEntity>> trackHandler = new CloudCallbackHandler<List<CloudEntity>>() {
+      @SuppressWarnings("unchecked")
+      @Override
+      public void onComplete(
+          List<CloudEntity> results) {
+        if (results.size() > 0) {
+          @SuppressWarnings("rawtypes")
+          CloudCallbackHandler handler = new CloudCallbackHandler() {
+            @Override
+            public void onComplete(Object results) {
+              // Do nothing - creep was successfully deleted
+            }
+            
+            @Override
+            public void onError(final IOException exception) {
+              Log.e("TAG", "IOException error deleting creep from the Cloud");
+            }
+          };  
+          getCloudBackend().delete(results.get(0), handler);
+        } else {
+          // Couldn't find the specified creep in the cloud
+          Log.i("Comments", "Couldn't find creep to be deleted in Cloud");
+        }
+      }
+
+      @Override
+      public void onError(final IOException exception) {
+        Log.e("TAG", "IOException error finding creep in Cloud");
+      }
+    };
+
+    CloudQuery cq = new CloudQuery("Creep");
+    cq.setScope(Scope.PAST);
+    cq.setFilter(Filter.eq("creep_uuid", c.getCloudId()));
+    getCloudBackend().list(cq, trackHandler);
+  }
+  
+  /* Starts publishing your location update */
+  private void publishLocationUpdate() {
+    // Get your current lat/long
+    LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    Criteria criteria = new Criteria();
+    criteria.setAccuracy(Criteria.ACCURACY_FINE);
+    criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+    String provider = locationManager.getBestProvider(criteria, true);
+    Location location = locationManager.getLastKnownLocation(provider);
+    
+    if(location != null) {
+      // Set up GCM publish
+      CloudBackendMessaging cbm = new CloudBackendMessaging(this);
+      CloudEntity ce = cbm.createCloudMessage(sPhoneNumber);
+      ce.put("last_update", location.getTime());
+      ce.put("latitude", location.getLatitude());
+      ce.put("longitude", location.getLongitude());
+      Log.i("Comments", "User latitude: " + Double.toString(location.getLatitude()));
+      Log.i("Comments", "User longitude: " + Double.toString(location.getLongitude()));
+      cbm.sendCloudMessage(ce);
+    } else {
+      Log.i("Comments", "No personal location available");
+    }
+  }
+  
+  /* Subscribes user to GCM location updates with input phone number as topicId */
+  private void subscribeToLocationUpdates(final String number) {
+    // Create a response handler that will received the result
+    CloudCallbackHandler<List<CloudEntity>> handler = new CloudCallbackHandler<List<CloudEntity>>() {
+      @Override
+      public void onComplete(List<CloudEntity> messages) {
+        Log.i("Comments", "Subscribing to messages from: " + number);
+        // Get most recent message
+        if(messages.size() != 0) {
+          CloudEntity ce = messages.get(0);
+          
+          // Get lat/long from CloudEntity
+          Double lat = (Double) ce.get("latitude");
+          Double lon = (Double) ce.get("longitude");
+          if(lat == null || lon == null) {
+            // Lat/Long is bad
+            Log.e(TAG, "Bad lat/long from Cloud message for: " + number);
+            return;
+          }
+          
+          // Get time CloudEntity was created (location updated)
+          Long timeCreated = ((Date) ce.get("_createdAt")).getTime();
+          Long currT = (new Date()).getTime();
+          
+          // Get List of creeps corresponding to input number
+          List<Creep> creeps = sLab.getCreeps(number);
+          
+          for(int i = 0; i < creeps.size(); i++) {
+            Creep c = creeps.get(i);
+            c.setLatitude(lat);
+            c.setLongitude(lon);
+            Log.i("Comments", "Creep latitude: " + lat.toString());
+            Log.i("Comments", "Creep longitude" + lon.toString());
+            
+            if(c.getIsStarted()) {
+              // Update GPS Enabled (location current) indicator
+              if((currT - timeCreated) < LOCATION_MAX_INTERVAL) {
+                c.setGpsEnabled(true);
+              } else {
+                c.setGpsEnabled(false);
+              }
+            }
+            c.setIsSubscribed(true);
+          }
+          adp1.notifyDataSetChanged();
+          adp2.notifyDataSetChanged();
+        }
+      }
+    };
+    
+    // Set up GCM subscribe.  Only retrieves latest message
+    CloudBackendMessaging cbm = new CloudBackendMessaging(this);
+    cbm.subscribeToCloudMessage(number, handler, 1);
+  }
+  
+  /* Unsubscribes user from GCM location updates */
+  private void unsubscribeFromLocationUpdates(List<Creep> list) {
+    CloudBackendMessaging cbm = new CloudBackendMessaging(this);
+    // Unsubscribe from location updates for passed-in creeps
+    for(int i = 0; i < list.size(); i++) {
+      // Unsubscribe creep from location updates
+      if(list.get(i).getIsSubscribed()) {
+        cbm.unsubscribeFromCloudMessage(list.get(i).getNumber());
+        list.get(i).setIsSubscribed(false);
+      }
+    }
+  }
+
+  /* Action taken when activity is resumed */
+  @Override
+  public void onResume() {
+    super.onResume();
+    if (getIntent().getExtras() != null) {
+      if (((String) getIntent().getExtras().get("source")).equals("FriendSelectorActivity")) {
+        if((UUID) getIntent().getExtras().get("uuid") != null) {
+          Creep c = sLab.getCreep((UUID)getIntent().getExtras().get("uuid"));
+          addCreepToCloud(c);
+        }
+      }
+    }
+    // Update lists on activity resume
+    this.adp1.notifyDataSetChanged();
+    this.adp2.notifyDataSetChanged();
+
+    // If there's an instance of CreepMapActivity open, kill it
+    if (CreepMapActivity.getInstance() != null) {
+      CreepMapActivity.getInstance().finish();
+    }
+
+    // ListView update timer (re)started
+    startTimer();
+  }
 
   /* Action taken when activity is paused or destroyed */
   @Override
   public void onPause() {
     stopTimer();
     super.onPause();
+  }
+  
+  /* Builds GPS not enabled alert message and provides option to re-enable */
+  private void buildAlertMessageNoGps() {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    // Alert dialog blocks activity from running and opening map
+    builder
+        .setMessage("Your GPS seems to be disabled, do you want to enable it?")
+        .setCancelable(false)
+        .setPositiveButton(
+            "Yes",
+            new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(final DialogInterface dialog, final int id) {
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+              }
+            })
+        .setNegativeButton(
+            "No", 
+            new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(final DialogInterface dialog, final int id) {
+                dialog.cancel();
+              }
+            });
+    final AlertDialog alert = builder.create();
+    alert.show();
   }
 
   /* Builds the Activity Bar Menu */
@@ -444,50 +628,9 @@ public class MainActivity extends
       return super.onOptionsItemSelected(item);
     }
   }
-
-  /* Deletes a local creep from the cloud */
-  public void deleteFromCloud(Creep c) {
-    // Create a response handler that will receive the result or an error
-    CloudCallbackHandler<List<CloudEntity>> trackHandler = new CloudCallbackHandler<List<CloudEntity>>() {
-      @SuppressWarnings("unchecked")
-      @Override
-      public void onComplete(
-          List<CloudEntity> results) {
-        if (results.size() > 0) {
-          @SuppressWarnings("rawtypes")
-          CloudCallbackHandler handler = new CloudCallbackHandler() {
-            @Override
-            public void onComplete(Object results) {
-              // Do nothing - creep was successfully deleted
-            }
-            
-            @Override
-            public void onError(final IOException exception) {
-              Log.e("TAG", "IOException error deleting a creep from the Cloud");
-            }
-          };
-          
-          getCloudBackend().delete(results.get(0), handler);
-        } else {
-          // Couldn't find the specified creep in the cloud
-          Log.i("Comments", "Couldn't find creep to be deleted in Cloud");
-        }
-      }
-
-      @Override
-      public void onError(final IOException exception) {
-        Log.e("TAG", "IOException error finding creep in Cloud");
-      }
-    };
-
-    CloudQuery cq = new CloudQuery("Creep");
-    cq.setScope(Scope.PAST);
-    cq.setFilter(Filter.eq("creep_uuid", c.getCloudId()));
-    getCloudBackend().list(cq, trackHandler);
-  }
-
+  
   /* Erases a single cloud entity...for debugging */
-  public void eraseCloud(View v) {
+  public void eraseSingleCreepCloudEntity(View v) {
     // Create a response handler that will receive the result or an error
     CloudCallbackHandler<List<CloudEntity>> trackHandler = new CloudCallbackHandler<List<CloudEntity>>() {
       @SuppressWarnings("unchecked")
@@ -522,6 +665,9 @@ public class MainActivity extends
         } else {
           Log.i("Comments",
               "Nothing to be erased");
+          Log.i(
+              "Comments",
+              "1 Entry erased");
         }
       }
 

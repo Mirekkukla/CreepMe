@@ -1,7 +1,7 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import android.content.Context;
@@ -11,26 +11,27 @@ public class CreepLab {
   public final ArrayList<Creep> creepsOnYou;
 
   private static CreepLab sCreepLab;
+  private List<Creep> deletedCreeps;
+  
+  private Boolean isEmpty;
 
   private CreepLab(Context appContext) {
     this.creepsByYou = new ArrayList<Creep>();
     this.creepsOnYou = new ArrayList<Creep>();
+    this.deletedCreeps = new ArrayList<Creep>();
+    this.isEmpty = true;
 
     // Temporary list population for testing
     for (int i = 0; i < 2; i++) {
-      Date now = new Date();
       Creep c = new Creep();
-      c.setTimeMade(now.getTime());
-      c.setName("Hot Chick #" + (i + 1));
+      c.setName("Sparkles #" + (i + 1));
       c.setDuration((i + 1) * 1000 * 60 * 60);
-      c.setTimeStarted(now.getTime());
       c.setGpsEnabled(true);
       c.setLatitude(40.0176 - (i + 1) * .01);
       c.setLongitude(-105.2797 - (i + 1) * .001);
       c.setIsByYou(false);
-      c.setIsChecked(false);
       c.setIsStarted(true);
-      c.setIsComplete(false);
+      c.setIsSubscribed(true);
       this.creepsOnYou.add(c);
     }
   }
@@ -87,6 +88,23 @@ public class CreepLab {
     }
     return null;
   }
+  
+  /* Gets list of creeps by specified phone number */
+  public List<Creep> getCreeps(String number) {
+    List<Creep> creeps = new ArrayList<Creep>();
+    for (Creep c : this.creepsByYou) {
+      if(c.getNumber().equals(number)) {
+        creeps.add(c);
+      }
+    }
+
+    for (Creep c : this.creepsOnYou) {
+      if(c.getNumber().equals(number)) {
+        creeps.add(c);
+      }
+    }
+    return creeps;
+  }
 
   /* Adds new creep to relevant list */
   public void addCreep(Creep c) {
@@ -99,6 +117,7 @@ public class CreepLab {
 
   /* Removes creep from relevant list */
   public void removeCreep(Creep c) {
+    deletedCreeps.add(c);
     if (c.getIsByYou()) {
       this.creepsByYou.remove(this.creepsByYou.indexOf(c));
     } else if (!c.getIsByYou()) {
@@ -133,16 +152,34 @@ public class CreepLab {
   public void checkForCompletions() {
     for (int i = 0; i < this.creepsOnYou.size(); i++) {
       if (this.creepsOnYou.get(i).getIsComplete()) {
+        deletedCreeps.add(this.creepsOnYou.get(i));
         this.creepsOnYou.remove(i);
-        if(i != 0) i--;
+        i--;
       }
     }
     for (int i = 0; i < this.creepsByYou.size(); i++) {
       if (this.creepsByYou.get(i).getIsComplete()) {
+        deletedCreeps.add(this.creepsByYou.get(i));
         this.creepsByYou.remove(i);
-        if(i != 0) i--;
+        i--;
       }
     }
   }
 
+  public Boolean isEmpty() {
+    if(this.creepsOnYou.size() == 0 && this.creepsByYou.size() == 0) {
+      this.isEmpty = true;
+    } else {
+      this.isEmpty = false;
+    }
+    return this.isEmpty;
+  }
+  
+  public List<Creep> getDeletedCreepsList() {
+    return this.deletedCreeps;
+  }
+  
+  public void clearDeletedCreepsList() {
+    this.deletedCreeps.clear();
+  }
 }

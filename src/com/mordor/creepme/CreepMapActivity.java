@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -41,7 +42,7 @@ public class CreepMapActivity extends Activity {
 	static CreepMapActivity thisActivity;
 	private GoogleMap map;
 	private CheckBox zoomCheck;
-	private final int timeInterval = 15000; // location update delay, milliseconds
+	private final int LOCATION_UPDATE_INTERVAL = 15000; // Milliseconds
 	private Handler timerHandler;
 
 	/* Returns current map activity instance for external control */
@@ -67,10 +68,15 @@ public class CreepMapActivity extends Activity {
 		// Get a handle to the Map Fragment
 		map = ((MapFragment) getFragmentManager().findFragmentById(
 		    R.id.creep_mapFragment)).getMap();
+		
+		// Get your own location
 		map.setMyLocationEnabled(true);
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		String provider = LocationManager.GPS_PROVIDER;
-		location = locationManager.getLastKnownLocation(provider);
+		Criteria criteria = new Criteria();
+    criteria.setAccuracy(Criteria.ACCURACY_FINE);
+    criteria.setPowerRequirement(Criteria.POWER_MEDIUM);
+    String provider = locationManager.getBestProvider(criteria, true);
+    location = locationManager.getLastKnownLocation(provider);
 
 		// Get passed in extras
 		if (getIntent().getSerializableExtra("victimsList") != null) {
@@ -235,7 +241,7 @@ public class CreepMapActivity extends Activity {
 				zoomInOnCreeps(map);
 			}
 
-			timerHandler.postDelayed(locationUpdater, timeInterval);
+			timerHandler.postDelayed(locationUpdater, LOCATION_UPDATE_INTERVAL);
 		}
 	};
 

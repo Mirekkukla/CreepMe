@@ -19,6 +19,7 @@ public class Creep {
   private Boolean isStarted;
   private Boolean isComplete;
   private Boolean gpsEnabled;
+  private Boolean isSubscribed;
   private Double latitude;
   private Double longitude;
   private String cloudId;
@@ -26,6 +27,13 @@ public class Creep {
   /* Initializes UUID when creating a new Creep */
   public Creep() {
     this.id = UUID.randomUUID();
+    this.gpsEnabled = false;
+    this.isChecked = false;
+    this.isStarted = false;
+    this.isComplete = false;
+    this.isSubscribed = false;
+    this.timeMade = (new Date()).getTime();
+    this.timeStarted = this.timeMade;
   }
 
   public void setCloudId(String ce) {
@@ -150,6 +158,14 @@ public class Creep {
 
   public Double getLongitude() {
     return this.longitude;
+  }
+
+  public Boolean getIsSubscribed() {
+    return this.isSubscribed;
+  }
+
+  public void setIsSubscribed(Boolean isSubscribed) {
+    this.isSubscribed = isSubscribed;
   }
 
 }
