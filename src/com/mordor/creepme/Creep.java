@@ -6,140 +6,150 @@ import java.util.UUID;
 import android.graphics.Bitmap;
 
 public class Creep {
-	private String name;
-	private String number;
-	private Bitmap profilePic;
-	private long followTime;
-	private long timeRemaining;
-	private final UUID id;
-	private long timeMade;
-	private long timeStarted;
-	private Boolean isByYou;
-	private Boolean isChecked;
-	private Boolean isStarted;
-	private Boolean isComplete;
-	private Boolean gpsEnabled;
-	private Double latitude;
-	private Double longitude;
+  private String name;
+  private String number;
+  private Bitmap profilePic;
+  private long duration;
+  private long timeRemaining;
+  private final UUID id;
+  private long timeMade;
+  private long timeStarted;
+  private Boolean isByYou;
+  private Boolean isChecked;
+  private Boolean isStarted;
+  private Boolean isComplete;
+  private Boolean gpsEnabled;
+  private Double latitude;
+  private Double longitude;
+  private String cloudId;
 
-	/* Initializes UUID when creating a new Creep */
-	public Creep() {
-		this.id = UUID.randomUUID();
-	}
+  /* Initializes UUID when creating a new Creep */
+  public Creep() {
+    this.id = UUID.randomUUID();
+  }
 
-	public Boolean isByYou() {
-		return this.isByYou;
-	}
+  public void setCloudId(String ce) {
+    this.cloudId = ce;
+  }
 
-	public void setIsByYou(Boolean bool) {
-		this.isByYou = bool;
-	}
+  public String getCloudId() {
+    return this.cloudId;
+  }
 
-	public String getName() {
-		return this.name;
-	}
+  public Boolean getIsByYou() {
+    return this.isByYou;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setIsByYou(Boolean bool) {
+    this.isByYou = bool;
+  }
 
-	public String getNumber() {
-		return this.number;
-	}
+  public String getName() {
+    return this.name;
+  }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public long getFollowTime() {
-		return this.followTime;
-	}
+  public String getNumber() {
+    return this.number;
+  }
 
-	public void setFollowTime(long time) {
-		this.followTime = time;
-	}
+  public void setNumber(String number) {
+    this.number = number;
+  }
 
-	/* Returns time remaining in milliseconds */
-	public long getTimeRemaining() {
-		Date now = new Date();
-		this.timeRemaining = now.getTime() - this.timeStarted;
-		return this.timeRemaining;
-	}
+  public long getDuration() {
+    return this.duration;
+  }
 
-	public Bitmap getProfilePic() {
-		return this.profilePic;
-	}
+  public void setDuration(long time) {
+    this.duration = time;
+  }
 
-	public void setProfilePic(Bitmap pic) {
-		this.profilePic = pic;
-	}
+  /* Returns time remaining in milliseconds */
+  public long getTimeRemaining() {
+    Date now = new Date();
+    this.timeRemaining = this.getDuration()
+        - (now.getTime() - this.timeStarted);
+    return this.timeRemaining;
+  }
 
-	public Boolean gpsEnabled() {
-		return this.gpsEnabled;
-	}
+  public Bitmap getProfilePic() {
+    return this.profilePic;
+  }
 
-	public void setGpsEnabled(Boolean bool) {
-		this.gpsEnabled = bool;
-	}
+  public void setProfilePic(Bitmap pic) {
+    this.profilePic = pic;
+  }
 
-	public UUID getId() {
-		return this.id;
-	}
+  public Boolean gpsEnabled() {
+    return this.gpsEnabled;
+  }
 
-	public void setTimeMade(long time) {
-		this.timeMade = time;
-	}
+  public void setGpsEnabled(Boolean bool) {
+    this.gpsEnabled = bool;
+  }
 
-	public long getTimeMade() {
-		return this.timeMade;
-	}
+  public UUID getId() {
+    return this.id;
+  }
 
-	public long getTimeStarted() {
-		return this.timeStarted;
-	}
+  public void setTimeMade(long time) {
+    this.timeMade = time;
+  }
 
-	public void setTimeStarted(long time) {
-		this.timeStarted = time;
-	}
+  public long getTimeMade() {
+    return this.timeMade;
+  }
 
-	public void setIsChecked(Boolean bool) {
-		this.isChecked = bool;
-	}
+  public long getTimeStarted() {
+    return this.timeStarted;
+  }
 
-	public Boolean getIsChecked() {
-		return this.isChecked;
-	}
+  public void setTimeStarted(long time) {
+    this.timeStarted = time;
+  }
 
-	public void setIsStarted(Boolean bool) {
-		this.isStarted = bool;
-	}
+  public void setIsChecked(Boolean bool) {
+    this.isChecked = bool;
+  }
 
-	public Boolean getIsStarted() {
-		return this.isStarted;
-	}
+  public Boolean getIsChecked() {
+    return this.isChecked;
+  }
 
-	public void setIsComplete(Boolean bool) {
-		this.isComplete = bool;
-	}
+  public void setIsStarted(Boolean bool) {
+    this.isStarted = bool;
+  }
 
-	public Boolean getIsComplete() {
-		return this.isComplete;
-	}
+  public Boolean getIsStarted() {
+    return this.isStarted;
+  }
 
-	public void setLatitude(Double lat) {
-		this.latitude = lat;
-	}
+  public void setIsComplete(Boolean bool) {
+    this.isComplete = bool;
+  }
 
-	public Double getLatitude() {
-		return this.latitude;
-	}
+  public Boolean getIsComplete() {
+    return this.isComplete;
+  }
 
-	public void setLongitude(Double lng) {
-		this.longitude = lng;
-	}
+  public void setLatitude(Double lat) {
+    this.latitude = lat;
+  }
 
-	public Double getLongitude() {
-		return this.longitude;
-	}
+  public Double getLatitude() {
+    return this.latitude;
+  }
+
+  public void setLongitude(Double lng) {
+    this.longitude = lng;
+  }
+
+  public Double getLongitude() {
+    return this.longitude;
+  }
 
 }

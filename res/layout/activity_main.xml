@@ -84,5 +84,11 @@
             android:text="@string/map_all_selections" />
         
     </LinearLayout>
+    <Button
+        android:id="@+id/remove_from_cloudButton"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="Erase 1 CloudEntity"
+        android:onClick="eraseCloud" />
 
 </LinearLayout>
