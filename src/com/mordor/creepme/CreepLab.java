@@ -12,6 +12,7 @@ public class CreepLab {
 
   private static CreepLab sCreepLab;
   private List<Creep> deletedCreeps;
+  private List<Creep> updatedCreeps;
   
   private Boolean isEmpty;
 
@@ -19,6 +20,7 @@ public class CreepLab {
     this.creepsByYou = new ArrayList<Creep>();
     this.creepsOnYou = new ArrayList<Creep>();
     this.deletedCreeps = new ArrayList<Creep>();
+    this.updatedCreeps = new ArrayList<Creep>();
     this.isEmpty = true;
 
     // Temporary list population for testing
@@ -30,8 +32,9 @@ public class CreepLab {
       c.setLatitude(40.0176 - (i + 1) * .01);
       c.setLongitude(-105.2797 - (i + 1) * .001);
       c.setIsByYou(false);
-      c.setIsStarted(true);
+      c.setIsStarted(false);
       c.setIsSubscribed(true);
+      c.setNumber("8005556969");
       this.creepsOnYou.add(c);
     }
   }
@@ -181,5 +184,17 @@ public class CreepLab {
   
   public void clearDeletedCreepsList() {
     this.deletedCreeps.clear();
+  }
+  
+  public List<Creep> getUpdatedCreeps() {
+    return this.updatedCreeps;
+  }
+  
+  public void addUpdatedCreep(Creep c) {
+    this.updatedCreeps.add(c);
+  }
+  
+  public void clearUpdatedCreepsList() {
+    updatedCreeps.clear();
   }
 }

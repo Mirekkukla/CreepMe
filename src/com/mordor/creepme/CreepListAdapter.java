@@ -1,6 +1,7 @@
 package com.mordor.creepme;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -15,11 +16,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.mordor.creepme.R;
 
 public class CreepListAdapter extends
     ArrayAdapter<Creep> {
@@ -37,7 +37,7 @@ public class CreepListAdapter extends
 
   @Override
   public View getView(final int position, View convertView, ViewGroup parent) {
-    final Creep current = this.creepData.get(position);
+    final Creep c = this.creepData.get(position);
     CreepHolder holder = null;
 
     if (convertView == null) {
@@ -68,59 +68,58 @@ public class CreepListAdapter extends
 
     // Handle clicking on ListView item
     convertView.setOnClickListener(new OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            // Check for GPS enabled
-            final LocationManager manager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
-            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-              buildAlertMessageNoGps();
-              return;
-            }
-            if (current.getIsStarted() == true) {
-              // Open map with creep location
-              ArrayList<UUID> victim = new ArrayList<UUID>();
-              victim.add(current.getId());
-              Intent i = new Intent(context, CreepMapActivity.class);
-              i.putExtra("victimsList", victim);
-              context.startActivity(i);
-            } else {
-              Toast.makeText(context, "Pending Creeps cannot be mapped", Toast.LENGTH_SHORT).show();
-              return;
-            }
-          }
-        });
+      @Override
+      public void onClick(View v) {
+        // Check for GPS enabled
+        final LocationManager manager = (LocationManager) context
+            .getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+          buildAlertMessageNoGps();
+          return;
+        }
+        if (c.getIsStarted() == true) {
+          // Open map with creep location
+          ArrayList<UUID> victim = new ArrayList<UUID>();
+          victim.add(c.getId());
+          Intent i = new Intent(context, CreepMapActivity.class);
+          i.putExtra("victimsList", victim);
+          context.startActivity(i);
+        } else if(c.getIsByYou()) {
+          Toast.makeText(context, "Pending Creeps cannot be mapped", Toast.LENGTH_SHORT).show();
+          return;
+        } else {
+          // Is Pending creep on you, waiting for response
+          buildAlertMessageCreepPending(c);
+        }
+      }
+    });
 
     // Handle CheckBox actions, states
-    holder.checkBox.setChecked(current
-        .getIsChecked());
-    holder.checkBox
-        .setOnClickListener(new OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            current
-                .setIsChecked(!current
-                    .getIsChecked());
-          }
-        });
+    holder.checkBox.setChecked(c.getIsChecked());
+    holder.checkBox.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        c.setIsChecked(!c.getIsChecked());
+      }
+    });
 
     // Set profile picture ImageView
-    if (current.getProfilePic() != null) {
-      holder.profilePic.setImageBitmap(current.getProfilePic());
+    if (c.getProfilePic() != null) {
+      holder.profilePic.setImageBitmap(c.getProfilePic());
     } else {
       holder.profilePic.setImageResource(R.drawable.profile_default);
     }
 
     // Set name TextView
-    holder.name.setText(current.getName());
+    holder.name.setText(c.getName());
 
     // Update time remaining TextView
     this.tv = holder.timeLeft;
 
     if (this.tv != null) {
       String text = "pending";
-      long millisToFinish = current.getTimeRemaining();
-      if (current.getIsStarted() == true) {
+      long millisToFinish = c.getTimeRemaining();
+      if (c.getIsStarted() == true) {
         if (millisToFinish > 0) {
           // Convert millisToFinish to readable string
           int sec = (int) (millisToFinish / 1000) % 60;
@@ -141,7 +140,7 @@ public class CreepListAdapter extends
           text = (hours + ":" + minutes + ":" + seconds);
         } else {
           // Creep is complete
-          current.setIsComplete(true);
+          c.setIsComplete(true);
           text = "--:--:--";
         }
       }
@@ -149,7 +148,7 @@ public class CreepListAdapter extends
     }
 
     // Set GPS enabled ImageView
-    if (current.gpsEnabled()) {
+    if (c.gpsEnabled()) {
       holder.gps.setImageResource(R.drawable.gps_check_dark);
     } else {
       holder.gps.setImageResource(R.drawable.gps_x_dark);
@@ -157,11 +156,69 @@ public class CreepListAdapter extends
 
     return convertView;
   }
+  
+  /* Builds Pending Creep Yes/No dialog with option to change duration */
+  private void buildAlertMessageCreepPending(final Creep c) {
+    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    LayoutInflater inf = LayoutInflater.from(context);
+    final View durationEditView = inf.inflate(R.layout.duration_editor, null);
+    
+    final EditText hourEditor = (EditText) durationEditView.findViewById(R.id.edit_hrEditText);
+    final EditText minEditor = (EditText) durationEditView.findViewById(R.id.edit_minEditText);
+    
+    String min = Integer.toString((int) ((c.getDuration() / (1000 * 60)) % 60));
+    if(min.length() < 2) {
+      min = "0" + min;
+    }
+    String hr = Integer.toString((int) ((c.getDuration() / (1000 * 60 * 60)) % 24));
+    if(hr.length() < 2) {
+      hr = "0" + hr;
+    }
+    
+    hourEditor.setText(hr, TextView.BufferType.EDITABLE);
+    minEditor.setText(min, TextView.BufferType.EDITABLE);
+    
+    builder
+      .setTitle("Pending Creep from " + c.getName())
+      .setMessage(c.getName() + " wants to creep you!  Do you allow this?")
+      .setCancelable(false)
+      .setView(durationEditView)
+      .setPositiveButton(
+          "Yes",
+          new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int id) {
+              Long duration = Long.parseLong(hourEditor.getText().toString())*60*60*1000
+                  + Long.parseLong(minEditor.getText().toString())*60*1000;
+              if(duration == 0) {
+                Toast.makeText(context, "Duration set to 00:00 - cancelling creep", Toast.LENGTH_SHORT).show();
+              }
+              c.setDuration(duration); 
+              c.setIsStarted(true);
+              c.setTimeStarted((new Date()).getTime());
+              MainActivity.sLab.addUpdatedCreep(c);
+              /**
+               * TODO Send push notification to creeper that their creep has been acceptedF
+               */
+              dialog.cancel();
+            }
+          })
+      .setNegativeButton(
+          "No", 
+          new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, final int id) {
+              MainActivity.sLab.removeCreep(c);
+              dialog.cancel();
+            }
+          });
+    final AlertDialog alert = builder.create();
+    alert.show();
+  }
 
   /* Builds GPS not enabled alert message and provides option to re-enable */
   private void buildAlertMessageNoGps() {
-    final AlertDialog.Builder builder = new AlertDialog.Builder(
-        context);
+    final AlertDialog.Builder builder = new AlertDialog.Builder(context);
     // Alert dialog blocks activity from running and opening map,
     // allows user to go direct to enable screen
     builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")

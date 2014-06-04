@@ -14,6 +14,7 @@
     <string name="profile_pic_description">Profile Picture</string>
     <string name="default_friend_name">&lt; who yer creepin &gt;</string>
     <string name="creep_time">Set Duration:</string>
+    <string name="creep_time_edit">Edit duration:</string>
     <string name="default_hours">05</string>
     <string name="default_minutes">00</string>
     <string name="hr">hr</string>

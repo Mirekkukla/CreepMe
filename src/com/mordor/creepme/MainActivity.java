@@ -67,7 +67,7 @@ public class MainActivity extends CloudBackendActivity {
 
     // Initialize contactMap
     contactMap = new HashMap<String, Contact>();
-    timeSinceLastUpdate = 0;
+    timeSinceLastUpdate = LOCATION_UPDATE_INTERVAL;
 
     // Get user's phone number
     TelephonyManager telManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
@@ -114,17 +114,21 @@ public class MainActivity extends CloudBackendActivity {
           for (int i = 0; i < results.size(); i++) {
             // Add each creep to lab
             CloudEntity ce = results.get(i);
-            Creep c = new Creep();
+            Creep c = sLab.getCreep((String) ce.get("creep_uuid"));
+            if(c == null) {
+              c = new Creep();
+              if (((String) ce.get("creeper")).equals(sPhoneNumber)) {
+                c.setIsByYou(true);
+              } else {
+                c.setIsByYou(false);
+              }
+              c.setNumber((String) ce.get("victim"));
+              c.setCloudId((String) ce.get("creep_uuid"));
+              sLab.addCreep(c);
+            }           
             c.setDuration(Long.parseLong(((String) ce.get("duration"))));
-            if (((String) ce.get("creeper")).equals(sPhoneNumber)) {
-              c.setIsByYou(true);
-            } else {
-              c.setIsByYou(false);
-            }
-            c.setNumber((String) ce.get("victim"));
             c.setIsStarted((Boolean) ce.get("is_started"));
             c.setTimeStarted(Long.parseLong(((String) ce.get("time_started"))));
-            c.setCloudId((String) ce.get("creep_uuid"));
 
             if (c.getTimeRemaining() > 0) {
               // Creep is still valid
@@ -132,19 +136,8 @@ public class MainActivity extends CloudBackendActivity {
               if (contactMap.get(c.getNumber()).getName() != null) {
                 c.setName((contactMap.get(c.getNumber())).getName());
               } else {
-                c.setName("<unknown number>");
+                c.setName(reformatNumber(c.getNumber()));
               }
-              
-              // Check if creep is already in local list
-              if(sLab.getCreep(c.getCloudId()) != null) {
-                if(sLab.getCreep(c.getCloudId()).equals(c)) {
-                  // If so, delete it before adding updated version
-                  sLab.removeCreep(sLab.getCreep(c.getCloudId()));
-                }
-              }
-              
-              // Add creep to local list
-              sLab.addCreep(c);
             } else {
               // Creep has timed out - remove it
               Log.i("Comments", "Removing timed-out creep");
@@ -234,6 +227,12 @@ public class MainActivity extends CloudBackendActivity {
       return null;
     }
     return sb.toString();
+  }
+  
+  /* Reformats a 10-digit phone number to (xxx) xxx-xxxx format */
+  private String reformatNumber(String num) {
+    num = "(" + num.substring(0, 3) + ") " + num.substring(3, 6) + "-" + num.substring(6, 10);
+    return num;
   }
 
   /* Action taken on Add New Creep Button click */
@@ -355,6 +354,10 @@ public class MainActivity extends CloudBackendActivity {
       // Unsubscribe from any deleted creeps, reset list
       unsubscribeFromLocationUpdates(sLab.getDeletedCreepsList());
       sLab.clearDeletedCreepsList();
+      
+      // Update any updated creeps, reset list
+      updateCreeps(sLab.getUpdatedCreeps());
+      sLab.clearUpdatedCreepsList();
       
       adp1.notifyDataSetChanged();
       adp2.notifyDataSetChanged();
@@ -534,6 +537,34 @@ public class MainActivity extends CloudBackendActivity {
         cbm.unsubscribeFromCloudMessage(list.get(i).getNumber());
         list.get(i).setIsSubscribed(false);
       }
+    }
+  }
+  
+  /* Updates creeps in the cloud that have been changed locally */
+  private void updateCreeps(List<Creep> list) {
+    for(Creep c : list) {
+      CloudCallbackHandler<List<CloudEntity>> handler = new CloudCallbackHandler<List<CloudEntity>>() {
+        @Override
+        public void onComplete(List<CloudEntity> results) {
+          if(results.size() > 0) {
+            CloudCallbackHandler<CloudEntity> updateHandler = new CloudCallbackHandler<CloudEntity>() {
+              @Override
+              public void onComplete(CloudEntity results) {
+                // Successfully updated
+              }
+              
+              @Override
+              public void onError(final IOException exception) {
+                Log.e("TAG", "IOException error updating creep in the Cloud");
+              }
+            };
+            getCloudBackend().update(results.get(0), updateHandler);
+          }
+        }   
+      };
+      CloudQuery cq = new CloudQuery("Creep");
+      cq.setFilter(Filter.eq("creep_uuid", c.getCloudId()));
+      getCloudBackend().list(cq, handler);
     }
   }
 

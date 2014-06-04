@@ -255,7 +255,7 @@ public class FriendSelectorActivity extends Activity implements OnItemClickListe
     creep.setIsByYou(true);
     
     // TODO just for debugging
-    creep.setIsStarted(true);
+    creep.setIsStarted(false);
 
     if (creep.getName() == null) {
       Toast.makeText(this,"Gotta choose creep victim first!", 

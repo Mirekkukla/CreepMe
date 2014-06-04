@@ -254,22 +254,24 @@ containing a value of this type.
         public static final int profile_default=0x7f020030;
     }
     public static final class id {
-        public static final int action_add_creep=0x7f06001b;
-        public static final int action_delete_selections=0x7f06001c;
-        public static final int action_map_selections=0x7f06001d;
-        public static final int action_settings=0x7f06001a;
+        public static final int action_add_creep=0x7f06001d;
+        public static final int action_delete_selections=0x7f06001e;
+        public static final int action_map_selections=0x7f06001f;
+        public static final int action_settings=0x7f06001c;
         public static final int cancelBox=0x7f060012;
         public static final int cancel_selectionButton=0x7f06000e;
-        public static final int creep_mapFragment=0x7f060018;
+        public static final int creep_mapFragment=0x7f06001a;
         public static final int creep_new_friendButton=0x7f06000f;
-        public static final int directionsButton=0x7f060019;
+        public static final int directionsButton=0x7f06001b;
+        public static final int edit_hrEditText=0x7f060016;
+        public static final int edit_minEditText=0x7f060017;
         public static final int follow_timeText=0x7f060014;
         public static final int fragmentContainer=0x7f060005;
         public static final int friend_nameText=0x7f060008;
         public static final int gps_enabledImage=0x7f060015;
         public static final int hrsEditText=0x7f060009;
         public static final int hybrid=0x7f060004;
-        public static final int map_infoText=0x7f060016;
+        public static final int map_infoText=0x7f060018;
         public static final int map_selectionButton=0x7f060010;
         public static final int minsEditText=0x7f06000a;
         public static final int none=0x7f060000;
@@ -283,7 +285,7 @@ containing a value of this type.
         public static final int to_numberAutoText=0x7f060006;
         public static final int who_creeping_youList=0x7f06000d;
         public static final int who_you_creepingList=0x7f06000c;
-        public static final int zoomCheckBox=0x7f060017;
+        public static final int zoomCheckBox=0x7f060019;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f080000;
@@ -294,7 +296,8 @@ containing a value of this type.
         public static final int activity_friend_selector=0x7f030001;
         public static final int activity_main=0x7f030002;
         public static final int creep_list_element=0x7f030003;
-        public static final int fragment_map=0x7f030004;
+        public static final int duration_editor=0x7f030004;
+        public static final int fragment_map=0x7f030005;
     }
     public static final class menu {
         public static final int friend_selector_options=0x7f0b0000;
@@ -401,24 +404,25 @@ containing a value of this type.
          */
         public static final int common_signin_button_text_long=0x7f070013;
         public static final int creep_time=0x7f070027;
+        public static final int creep_time_edit=0x7f070028;
         public static final int default_friend_name=0x7f070026;
-        public static final int default_hours=0x7f070028;
-        public static final int default_minutes=0x7f070029;
-        public static final int default_time=0x7f07002e;
-        public static final int directions=0x7f070031;
-        public static final int gps_disabled=0x7f070030;
-        public static final int gps_enabled=0x7f07002f;
+        public static final int default_hours=0x7f070029;
+        public static final int default_minutes=0x7f07002a;
+        public static final int default_time=0x7f07002f;
+        public static final int directions=0x7f070032;
+        public static final int gps_disabled=0x7f070031;
+        public static final int gps_enabled=0x7f070030;
         public static final int gps_enabled_warning=0x7f070024;
-        public static final int hr=0x7f07002a;
+        public static final int hr=0x7f07002b;
         /**  Location client code resources (prefix with location_client) 
          */
         public static final int location_client_powered_by_google=0x7f07001a;
         public static final int map_all_selections=0x7f07001d;
-        public static final int min=0x7f07002b;
+        public static final int min=0x7f07002c;
         public static final int profile_pic_description=0x7f070025;
-        public static final int selector_final=0x7f07002d;
+        public static final int selector_final=0x7f07002e;
         public static final int selector_title=0x7f070020;
-        public static final int to_number_hint=0x7f07002c;
+        public static final int to_number_hint=0x7f07002d;
         public static final int who_creeping_you=0x7f070022;
         public static final int who_you_creeping=0x7f070021;
     }
